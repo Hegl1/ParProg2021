@@ -1,12 +1,12 @@
 # ParProg2021
 
-## Wöchentliche Aufgabenverteilung:
+## Distribution of tasks:
 
-### Woche1:
-- [x] Task1: Alle
-- [x] Task2: Alle
+### Week01:
+- [x] Task1: everyone
+- [x] Task2: everyone
 
-### Woche2:
+### Week02:
 - [x] Task1: Tobi
 - [x] Task2: Thomas
 - [x] Task3: Marcel
