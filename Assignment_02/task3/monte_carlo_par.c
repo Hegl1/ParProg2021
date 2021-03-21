@@ -28,8 +28,7 @@ int main(int argc, char** argv) {
 	long total_inside_points = 0;
 	pthread_t threads[number_of_threads - 1];
 	void* ret_vals[number_of_threads];
-	struct thread_args t_args[number_of_threads - 1];
-	struct thread_args t_arg;
+	struct thread_args t_args[number_of_threads];
 
 	double start_time = omp_get_wtime();
 
@@ -39,9 +38,9 @@ int main(int argc, char** argv) {
 		pthread_create(&threads[i], NULL, calculate_partial_monte_carlo, (void*)&t_args[i]);
 	}
 
-	t_arg.fract_n = &fract_n;
-	t_arg.seed = time(NULL);
-	ret_vals[number_of_threads - 1] = calculate_partial_monte_carlo((void*)&t_arg);
+	t_args[number_of_threads-1].fract_n = &fract_n;
+	t_args[number_of_threads-1].seed = time(NULL);
+	ret_vals[number_of_threads - 1] = calculate_partial_monte_carlo((void*)&t_args);
 	total_inside_points += *(long*)ret_vals[number_of_threads - 1];
 	free(ret_vals[number_of_threads - 1]);
 
@@ -62,8 +61,8 @@ void* calculate_partial_monte_carlo(void* n_part) {
 	struct thread_args args = *(struct thread_args*)n_part;
 	long total_inside = 0;
 	for(int i = 0; i < *args.fract_n; i++) {
-		float x = ((double)rand_r(&args.seed) / (RAND_MAX));
-		float y = ((double)rand_r(&args.seed) / (RAND_MAX));
+		float x = ((float)rand_r(&args.seed) / (RAND_MAX));
+		float y = ((float)rand_r(&args.seed) / (RAND_MAX));
 		if((x * x + y * y) <= 1) {
 			total_inside++;
 		}
