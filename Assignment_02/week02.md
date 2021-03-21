@@ -66,7 +66,7 @@ For instance, let us assume the following array:
 
 ![memory_visualization](task2/images/memory_visualization.png)
 
-Then the procedure for the first variant would look like this, assuming the cache offers space for 3 elements:
+Then the procedure for the first variant would look like this, assuming the cache line offers space for 3 elements:
 
 1. accessing element $11$, initial cache miss, write in cache
    ![cache_111213](task2/images/cache_111213.png)
@@ -91,7 +91,7 @@ $$
 f_{1}(n, s) = \frac{8n^2}{s}
 $$
 
-In the cache $\frac{s}{4}$ elements can be stored, so the cache size divided by the size of one element in bytes. That means that after $\frac{s}{4}$ many elements there will be a cache miss.
+In the cache line $\frac{s}{4}$ elements can be stored, so the cache line size divided by the size of one element in bytes. That means that after $\frac{s}{4}$ many elements there will be a cache miss.
 So the $n^2$ accesses get divided by $\frac{s}{4}$ and everything is getting multiplied by 2 because there are two matrices.
 
 The cache misses of the second variant can be calculated by the following function:
@@ -99,7 +99,7 @@ $$
 f_{2}(n) = 2n^2
 $$
 
-In this case with every access a cache miss occurs, because the cache gets wiped with every access when accessing element column by column.
+In this case with every access a cache miss occurs, because the cache line gets wiped with every access when accessing element column by column.
 
 ### Analysis with 'cachegrind'
 
@@ -113,7 +113,7 @@ And the corresponding result for the second variant:
 $$
 f_{2}(700) = 2*700^2 = 980\ 000
 $$
-With the output from cachegrind we can check if these calculations correspond to reality. The essential value in the following output of cachegrind is the line in which the element wise product is computed, in the column of ``D1mr``, which equates with the occurring cache misses when reading from the layer-1 data cache (``D1mr``: **D**ata level **1** cache **m**issing **r**eads). At this point in the table cachegrind indicates $61\ 251$ cache misses for the first variant of the Hadamard product computation, which roughly matches the calculated value above:
+With the output from cachegrind we can check if these calculations correspond to the simulation. The essential value in the following output of cachegrind is the line in which the element wise product is computed, in the column of ``D1mr``, which equates with the occurring cache misses when reading from the layer-1 data cache (``D1mr``: **D**ata level **1** cache **m**issing **r**eads). At this point in the table cachegrind indicates $61\ 251$ cache misses for the first variant of the Hadamard product computation, which roughly matches the calculated value above:
 
 ```
 --------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ With the second variant the number of simulated cache misses ($980\ 000$) equals
 --------------------------------------------------------------------------------
 -- User-annotated source: /home/cb76/cb761027/PP/Assignment2/a2b.c
 --------------------------------------------------------------------------------
-        Ir I1mr ILmr        Dr    D1mr   DLmr      Dw    D1mw   DLmw
+        Dr    D1mr   DLmr      Dw    D1mw   DLmw
 
          .       .      .       .       .      .  #include <stdlib.h>
          .       .      .       .       .      .
@@ -177,7 +177,7 @@ With the second variant the number of simulated cache misses ($980\ 000$) equals
 
 ### Analysis with 'perf'
 
-When analyzing the behavior of the computations in the real world, perf yields different data as cachegrind. In case of the first variant there are $10\ 287$ registered cache misses which is far less than the theoretical $61\ 251$ (or $61\ 250$) cache misses. This indicates that in the real world some other optimizations come into affect, resulting in approximately $16.7\%$ of the theoretical cache misses:
+When analyzing the behavior of the computations in the real world, perf yields different data as cachegrind. In case of the first variant there are $10\ 483$ registered cache misses which is far less than the theoretical $61\ 250$ (or $61\ 251$) cache misses. This indicates that in the real world some other optimizations come into affect, resulting in approximately $17\%$ of the theoretical cache misses:
 
 ``` 
  Performance counter stats for './a2a':
@@ -188,15 +188,15 @@ When analyzing the behavior of the computations in the real world, perf yields d
        0.008103076 seconds time elapsed
 ```
 
-On the other hand the results for the second variant are way more drastic. Only $42\ 377$ cache misses occur, which results in just $4.3\%$ of the theoretical cache misses:
+On the other hand the results for the second variant are way more drastic. Only $116\ 946$ cache misses occur, which results in just $11\%$ of the theoretical cache misses:
 
 ``` 
  Performance counter stats for './a2b':
 
-           8455097      L1-dcache-loads:u
-             40946      L1-dcache-loads-misses:u  #    0.48% of all L1-dcache hits
+           8468287      L1-dcache-loads:u
+            116301      L1-dcache-loads-misses:u  #    1.37% of all L1-dcache hits
 
-       0.011510387 seconds time elapsed
+       0.009955886 seconds time elapsed
 ```
 
 I am not sure about the correctness about these measurements, maybe the compiler optimizes a whole fricking lot at this point, but in my point of view these differences seem pretty radical.
