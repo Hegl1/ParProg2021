@@ -16,7 +16,7 @@ int main(int argc, char** argv){
         num_threads = atol(argv[2]);
     }
 
-    int seed = 0;
+    unsigned int seed = 0;
     long total_inside = 0;
     omp_set_num_threads(num_threads);
     double start_time = omp_get_wtime();
