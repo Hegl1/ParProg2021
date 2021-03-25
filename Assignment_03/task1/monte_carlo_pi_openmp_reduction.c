@@ -20,7 +20,7 @@ int main(int argc, char** argv){
     long total_inside = 0;
     omp_set_num_threads(num_threads);
     double start_time = omp_get_wtime();
-    long partial_inside[num_threads][num_threads];
+    long partial_inside[num_threads][num_threads];  //2 dimensional array for padding
     #pragma omp parallel private(seed)
     {
         const int current_thread = omp_get_thread_num();

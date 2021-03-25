@@ -16,3 +16,6 @@ monte_carlo_critical: monte_carlo_pi_openmp_critical.c
 
 monte_carlo_reduction: monte_carlo_pi_openmp_reduction.c
 	$(CC) $(CFLAGS) monte_carlo_pi_openmp_reduction.c -o monte_carlo_reduction.out
+
+monte_carlo_threads: monte_carlo_threads.c
+	$(CC) $(CFLAGS) monte_carlo_threads.c -o monte_carlo_threads.out
