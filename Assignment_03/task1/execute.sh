@@ -20,4 +20,4 @@ for i in {1..8}
 do
     ./monte_carlo_critical.out 500000000 $i
 done
-make clean /dev/null
+make clean > /dev/null
