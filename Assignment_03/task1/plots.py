@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import sys
 
 def plot_all(threads, red, atomic, critical ,base):
     plt.plot(base, threads)
@@ -48,7 +49,10 @@ def readFile(filename):
         result.append(get_block_content(block))
     return result
 
-res = readFile("output_local.dat")
-plot_all(res[0], res[1], res[2], res[3], range(1,9))
-print_table(range(1,9), res[0], res[1], res[2], res[3], '| number_of_threads | thread_version | reduced_version | atomic_version | critical_version |\n')
-
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("Usage: python3 plots.py <file with formattet output data>")
+    else:
+        res = readFile(sys.argv[1])
+        plot_all(res[0], res[1], res[2], res[3], range(1,9))
+        print_table(range(1,9), res[0], res[1], res[2], res[3], '| number_of_threads | thread_version | reduced_version | atomic_version | critical_version |\n')
