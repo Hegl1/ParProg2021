@@ -20,24 +20,22 @@ int main(int argc, char** argv){
     long total_inside = 0;
     omp_set_num_threads(num_threads);
     double start_time = omp_get_wtime();
-    long partial_inside[num_threads][num_threads];  //2 dimensional array for padding
     #pragma omp parallel private(seed)
     {
-        const int current_thread = omp_get_thread_num();
-        partial_inside[current_thread][0] = 0;
+        long partial_inside = 0;
         seed = time(NULL);
         #pragma omp for schedule(static)
         for(int i = 0; i < n; i++){
             float x = ((float) rand_r(&seed) / (RAND_MAX));
             float y = ((float) rand_r(&seed) / (RAND_MAX));
             if((x*x + y*y)<= 1){
-                partial_inside[current_thread][0]++;
+                partial_inside++;
             }
         }
 
         #pragma omp for reduction(+: total_inside)
         for (int i = 0; i<num_threads; i++){
-            total_inside += partial_inside[i][0];
+            total_inside+=partial_inside;
         }
 
     }
