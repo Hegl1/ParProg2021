@@ -23,17 +23,21 @@ int main(int argc, char** argv){
 
     #pragma omp parallel private(seed)
     {
+        long partial_inside = 0;
         seed = time(NULL);
+
         #pragma omp for schedule(static)
         for(int i = 0; i < n; i++){
             float x = ((float) rand_r(&seed) / (RAND_MAX));
             float y = ((float) rand_r(&seed) / (RAND_MAX));
             if((x*x + y*y)<= 1){
-                #pragma omp critical (summation)
-                {
-                    total_inside++;
-                }
+                partial_inside++;
             }
+        }
+
+        #pragma omp critical (summation)
+        {
+            total_inside+=partial_inside;
         }
     }
 
