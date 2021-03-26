@@ -18,9 +18,9 @@ def plot_total_runtimes(threads, red, atomic, critical ,base):
     plt.clf()
 
 def plot_delta_runtimes(threads, red, atomic, critical, base):
-    reddiff = [t-e for t, e in zip(threads, red)]
-    atomicdiff = [t-e for t, e in zip(threads, atomic)]
-    criticaldiff = [t-e for t, e in zip(threads, critical)]
+    reddiff = [e-t for t, e in zip(threads, red)]
+    atomicdiff = [e-t for t, e in zip(threads, atomic)]
+    criticaldiff = [e-t for t, e in zip(threads, critical)]
     plt.plot(base, reddiff)
     plt.scatter(base, reddiff, marker='x')
     plt.plot(base, atomicdiff)
@@ -28,13 +28,29 @@ def plot_delta_runtimes(threads, red, atomic, critical, base):
     plt.plot(base, criticaldiff)
     plt.scatter(base, criticaldiff, marker='x')
     plt.xlabel("Number of threads")
-    plt.ylabel("Execution time delta")
+    plt.ylabel("Execution time delta [s]")
     plt.legend(['reduced', 'atomic','critical'])
-    plt.title('Relative runtimes OMP-Versions vs Thread-Version')
+    plt.title('Relative runtimes (OMP Version - Thread Version)')
     plt.savefig('./plots/relative_runtimes.png')
     plt.clf()
 
-
+def plot_bar_runtimes(threads, red, atomic, critical, base):
+    plt.bar(['Reduced'], red[0] - threads[0])
+    plt.bar(['Atomic'], atomic[0] - threads[0])
+    plt.bar(['Critical'], critical[0] - threads[0])
+    plt.xlabel("Number of Threads - Version")
+    plt.ylabel("Execution time [s]")
+    plt.title('Relative runtimes (OMP Version - Thread Version), 1 Thread')
+    plt.savefig('./plots/relative_runtimes_bars_1.png')
+    plt.clf()
+    plt.bar(['Reduced'], red[7] - threads[7])
+    plt.bar(['Atomic'], atomic[7] - threads[7])
+    plt.bar(['Critical'], critical[7] - threads[7])
+    plt.xlabel("Number of Threads - Version")
+    plt.ylabel("Execution time [s]")
+    plt.title('Relative runtimes (OMP Version - Thread Version), 8 Threads')
+    plt.savefig('./plots/relative_runtimes_bars_8.png')
+    plt.clf()
 
 def print_table(base, col1, col2, col3, col4, title_line):
     result = title_line
@@ -78,4 +94,5 @@ if __name__ == '__main__':
         res = readFile(sys.argv[1])
         plot_total_runtimes(res[0], res[1], res[2], res[3], range(1,9))
         plot_delta_runtimes(res[0], res[1], res[2], res[3], range(1,9))
+        plot_bar_runtimes(res[0], res[1], res[2], res[3], range(1,9))
         print_table(range(1,9), res[0], res[1], res[2], res[3], '| number_of_threads | thread_version | reduced_version | atomic_version | critical_version |\n')
