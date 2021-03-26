@@ -20,6 +20,8 @@ int main(int argc, char** argv){
     long total_inside = 0;
     omp_set_num_threads(num_threads);
     double start_time = omp_get_wtime();
+    double partial_results[num_threads];
+
     #pragma omp parallel private(seed)
     {
         long partial_inside = 0;
@@ -32,10 +34,11 @@ int main(int argc, char** argv){
                 partial_inside++;
             }
         }
+        partial_results[omp_get_thread_num()] = partial_inside; //writing back to shared variable because unsure of reduction behaviour
 
         #pragma omp for reduction(+: total_inside)
         for (int i = 0; i<num_threads; i++){
-            total_inside+=partial_inside;
+            total_inside+=partial_results[i];
         }
 
     }
