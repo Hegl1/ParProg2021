@@ -39,3 +39,23 @@ Following data was used to create the plots:
 
 ### Using /usr/bin/time
 
+- The 'real world time' elapsed from program start to finsish is called **wall clock time**.
+- The time the process spends in user mode (program execution, library calls) is called **user time**. If there is more then one thread in use, **user time** shows the sum of the times each thread spent executing its task.
+- **System time** is the time spent in Kernel mode (syscalls).
+
+The wall clock time given by ```/usr/bin/time``` does match the time given by the measurement function of OpenMp almost exactly.
+For one thread, wall clock time  is equal to user time. For more then one thread, the user time matches the time that the program would take to execute on one thread. 
+
+
+
+| version             | OMP time | wall clock time | user time |
+| ------------------- | -------- | --------------- | --------- |
+| atomic, 1 thread    | 8.1428   | 8.14            | 8.14      |
+| atomic, 8 thread    | 1.0226   | 1.02            | 8.17      |
+| critical, 1 thread  | 8.1428   | 8.14            | 8.14      |
+| critical, 8 thread  | 1.0212   | 1.02            | 8.16      |
+| reduction, 1 thread | 8.1427   | 8.14            | 8.14      |
+| reduction, 8 thread | 1.0318   | 1.03            | 8.18      |
+| pthread, 1 thread   | 8.0365   | 8.03            | 8.03      |
+| pthread, 8 thread   | 1.0077   | 1.01            | 8.05      |
+
