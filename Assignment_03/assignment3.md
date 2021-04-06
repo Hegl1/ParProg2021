@@ -39,3 +39,28 @@ Following data was used to create the plots:
 
 ### Using /usr/bin/time
 
+
+
+## Task2
+
+Changes:
+
+* Parallelize matrix filling with OpenMP and using threadsafe rand_r() function (doesn't help the measured time, cause Measuring begins afterwards)
+
+* Changed the sequence of the nested for-loops from i->j->k to i->k->j so there are less cache-misses:
+
+  ![cache-explenation](task2/cache-explenation.PNG)
+
+* Used reduction to simplify the sum of the matrices, because the last for-loop, where "res" is evaluated, is a reduction problem case and be evaluated above where "res_local" is calculated
+* Deleting outter-most #pragma, cause there are only for-loops executed and these are handled seperatly
+
+
+
+### Measurements (Optimization-flag: Ofast)
+
+| number_of_threads | unefficient version | efficient version |
+| ----------------- | -------------- | --------------- |
+| 1                 | 20.71       | 5.24        | 
+| 2                 | 21.4       | 2.78        | 
+| 4                 | 22.05       | 1.84        | 
+| 8                 | 24.23       | 0.98        | 
