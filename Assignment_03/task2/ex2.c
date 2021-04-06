@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <omp.h>
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -64,49 +65,40 @@ int main(int argc, char **argv) {
 	INIT_ARRAY(b, error_b);
 	int **c = malloc(sizeof(*c) * n);
 	INIT_ARRAY(c, error_c);
-    unsigned *local_res = malloc(omp_get_max_threads() * sizeof(*local_res));
-    if (!local_res) PERROR_GOTO(error_c);
     status = EXIT_SUCCESS;
 
 	// fill matrix
-	srand(7);
+	unsigned int seed = time(NULL);
+#pragma omp parallel for default(none) shared(n,a,b,seed) collapse(2)
 	for (long i = 0; i < n; ++i) {
 		for (long j = 0; j < n; ++j) {
-			a[i][j] = rand();
-			b[i][j] = rand();
+			a[i][j] = rand_r(&seed);
+			b[i][j] = rand_r(&seed);
 		}
 	}
 
 	double start_time = omp_get_wtime();
-#pragma omp parallel default(none) shared(n, a, b, c, local_res)
-	{
 		// matrix multiplication
 #pragma omp parallel for default(none) shared(n, a, b, c)
 		for (long i = 0; i < n; ++i) {
-			for (long j = 0; j < n; ++j) {
-				for (long k = 0; k < n; ++k) {
+			for (long k = 0; k < n; ++k) {
+				for (long j = 0; j < n; ++j) {
 					c[i][j] += a[i][k] * b[k][j];
 				}
 			}
 		}
 
 		// sum of matrix c
-#pragma omp parallel for default(none) shared(n, a, b, c, local_res)
+		unsigned long res = 0;
+#pragma omp parallel for default(none) shared(n, a, b, c) reduction(+ : res)
 		for (long i = 0; i < n; ++i) {
 			for (long j = 0; j < n; ++j) {
-				local_res[omp_get_thread_num()] += c[i][j];
+				res += c[i][j];
 			}
 		}
-	}
-	unsigned long res = 0;
-	for (int l = 0; l < omp_get_num_threads(); ++l) {
-		res += local_res[l];
-	}
 	double end_time = omp_get_wtime();
 	printf("res: %lu, time: %2.2f seconds\n", res, end_time - start_time);
 
-	// cleanup
-	free(local_res);
 error_c:
 	free_2d_array(c, n);
 error_b:
