@@ -85,3 +85,36 @@ Changes:
 | 2                 | 21.4                | 2.78              |
 | 4                 | 22.05               | 1.84              |
 | 8                 | 24.23               | 0.98              |
+
+## Task 3
+
+
+
+In this task an iterative variant of merge sort had to be implemented and parallelized with OpenMP.
+
+To parallelize the algorithm, only the line  ``#pragma omp parallel for schedule(static)`` was added before the inner for loop, since it was not applicable for the outer loop, because of the (for this variant of parallelization) invalid iteration increment of the loop. 
+
+By this line and the static scheduling type, the loop gets divided into equal-sized chunks as far as possible, so these can be executed parallel by several threads.
+
+```c
+void mergesort(int32_t array[], int32_t temp[]) {
+	for(int subarray_size = 1; subarray_size <= N - 1; subarray_size *= 2) {
+#pragma omp parallel for schedule(static)
+		for(int subarray_start = 0; subarray_start < N - 1; subarray_start += 2 * subarray_size) {
+			int start = subarray_start;
+			int middle = subarray_start + subarray_size - 1;
+			int end = min(subarray_start + 2 * subarray_size - 1, N - 1);
+			merge(array, temp, start, middle, end);
+		}
+	}
+}
+```
+
+### Measurements (Optimization-flag: O2)
+
+| sequential | parallel (1 thread) | parallel (8 threads) |
+| ---------- | ------------------- | -------------------- |
+| 19.659 s   | 19.738 s            | 6.763 s              |
+
+The measurements are as expected. The algorithm finishes his task significantly faster when parallelized.
+
