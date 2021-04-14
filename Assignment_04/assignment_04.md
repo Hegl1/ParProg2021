@@ -10,7 +10,7 @@ by Tobias Hosp, Marcel Huber and Thomas Klotz
 
 #### What the code should do
 
-Flush.c spawns 2 threads using the omp parallel pragma. Both of these thrads can access the integers 'data' and 'flag'.
+Flush.c spawns 2 threads using the omp parallel pragma. Both of these threads can access the integers 'data' and 'flag'.
 The following block gets executed by thread 0:
 
 ```c
@@ -32,24 +32,24 @@ else if (omp_get_thread_num()==1) {
       }
 ```
 
- It waits until 'flag' is set to 1 by thread 0 and afterwards prints both variables.
+ The thread waits until 'flag' is set to 1 by thread 0 and afterwards prints both variables.
 
 #### What the code actually does
 
-In theory the logical order of events is correct and thread 1 should print the variables at some point, **however** this behaviour can only be observed most of the time.
+In theory the logical order of events is correct and thread 1 should print the variables at some point, **however** this behavior can be observed only most of the time.
 
 The code has been compiled with `-O3` and gcc version 8.2.0.
 For all the following results, the code has been executed at least 1000 times using a shell script.
 
-It usually results in the expected output, but every now and then program doesnt produce output and seems to stick in the endless loop.
+It usually results in the expected output, but every now and then the program doesn't produce output and seems to stick in the endless loop.
 
 #### An attempt to explain the behaviour
 
-The odd behaviour probably comes from the **OpenMP memory model**. In OpenMP, every thread has its own private memory space, which is not necessarily synchronized with the main memory. This means, that every read/write operations could potentially read/write from/to other data sources, e.g. registers.
+The odd behavior probably comes from the **OpenMP memory model**. In OpenMP, every thread has its own private memory space, which is not necessarily synchronized with the main memory. This means, that every read/write operations could potentially read/write from/to other data sources, e.g. registers.
 In our case this would mean that it is not guaranteed that thread 0 writes `flag` or `data` to main memory, nor is it guaranteed that thread 1 reads `flag` or `data` from main memory. 
 
-One possible explanation for our codes behaviour is a race condition.
-Assume that thread 1 reads `flag` only once from main memory - right before thread ones code execution starts. If thread 0 is already done with its task at this point, thread 1 reads `flag = 1` from main memory and immediateley leaves the while loop. However, if thread 0 did not write `flag` to main memory yet, thread 1 reads `flag = 0` and continues with the loop. After that, thread one reads `flag` only from registers, which means that it doesnt see updates to `flag` anymore and statys in the endless loop.
+One possible explanation for our codes behavior is a race condition.
+Assume that thread 1 reads `flag` only once from main memory - right before thread ones code execution starts. If thread 0 is already done with its task at this point, thread 1 reads `flag = 1` from main memory and immediately leaves the while loop. However, if thread 0 did not write `flag` to the main memory yet, thread 1 reads `flag = 0` and continues with the loop. After that, thread 1 reads `flag` only from registers, which means that it doesn't see updates to `flag` anymore and stays in the loop forever.
 
 #### First attempt to fix the code
 
@@ -89,7 +89,7 @@ At first glance this code seems perfectly fine, but after the finding of a suspi
 
 #### Second attempt to fix the code
 
-The order of flush statements is only guaranteed to be as written in the code for statements that share at least one variable. As en example, consider:
+The order of flush statements is only guaranteed to be as written in the code for statements that share at least one variable. As an example, consider the following:
 
 ```c
 ...
@@ -101,7 +101,7 @@ b = 4;
 ...
 ```
 
-Since the pragmas refer to different variable sets, it can not be guaranteed that the flush of a is performed before the flush of b. Instead, the following code ensures that there is no reordering between the flushes:
+Since the ``#pragma`` statements refer to different variable sets, it can not be guaranteed that the flush of a is performed before the flush of b. Instead, the following code ensures that there is no reordering between the flushes:
 
 ```c
 ...
@@ -113,7 +113,7 @@ b = 4;
 ...
 ```
 
-The follwing code is the final version of flush.c, wich is (*hopefully*) error free:
+The following code is the final version of flush.c, which is (*hopefully*) error free:
 
 ```c
 #include <omp.h>
@@ -147,9 +147,15 @@ int main() {
 }
 ```
 
+
+
+#### What is still unclear
+
+In the [stackoverflow](https://stackoverflow.com/questions/19687233/explict-flush-directive-with-openmp-when-is-it-necessary-and-when-is-it-helpful) thread, the last flush in the program also flushes `flag`, and a comment over the last `printf` states that flag is not defined at this point. We do not see a reason why this change is necessary and therefore we did not include this in our solution.
+
 #### Resources
 
-Following websites were very helpfull during the research for this exercise:
+Following websites were very helpful during the research for this exercise:
 
 - [stackoverflow](https://stackoverflow.com/questions/19687233/explict-flush-directive-with-openmp-when-is-it-necessary-and-when-is-it-helpful)
 - [the OpenMp API specification](https://www.openmp.org/wp-content/uploads/OpenMP-API-Specification-5-1.pdf)
