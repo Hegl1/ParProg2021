@@ -1,5 +1,5 @@
 CFLAGS = -std=gnu11 -Wall -Werror -Wextra -fopenmp -O3
-CC = gcc
+CC = gcc-10
 
 .PHONY: all
 all: flush_original flush_better
