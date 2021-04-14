@@ -147,6 +147,12 @@ int main() {
 }
 ```
 
+
+
+#### What is still unclear
+
+In the [stackoverflow](https://stackoverflow.com/questions/19687233/explict-flush-directive-with-openmp-when-is-it-necessary-and-when-is-it-helpful) thread, the last flush in the program also flushes `flag`, and a comment over the last `printf` states that flag is not defined at this point. We do not see a reason why this change is necessary and therefore we did not include this in our solution.
+
 #### Resources
 
 Following websites were very helpful during the research for this exercise:
