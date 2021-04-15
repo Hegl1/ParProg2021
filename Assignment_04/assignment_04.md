@@ -45,7 +45,7 @@ It usually results in the expected output, but every now and then the program do
 
 #### An attempt to explain the behaviour
 
-The odd behavior probably comes from the **OpenMP memory model**. In OpenMP, every thread has its own private memory space, which is not necessarily synchronized with the main memory. This means, that every read/write operations could potentially read/write from/to other data sources, e.g. registers.
+The odd behavior can be explained with the **OpenMP memory model**. In OpenMP, every thread has its own private memory space, which is not necessarily synchronized with the main memory. This means, that every read/write operations could potentially read/write from/to other data sources, e.g. registers.
 In our case this would mean that it is not guaranteed that thread 0 writes `flag` or `data` to main memory, nor is it guaranteed that thread 1 reads `flag` or `data` from main memory. 
 
 One possible explanation for our codes behavior is a race condition.
@@ -109,7 +109,7 @@ int a = 3;
 int b = 0;
 #pragma omp flush(a,b)
 b = 4;
-#ragma omp flush(b)
+#pragma omp flush(b)
 ...
 ```
 
