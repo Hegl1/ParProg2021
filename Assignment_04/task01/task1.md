@@ -7,7 +7,10 @@ With 1900000000 iterations on my local machine respectively 1000000000 on lcc2 w
 
 ### OpenMP 4.0 Affinity
 
-The developer has the opportunity to decide on how many PLACES(hyperthreads, cores, sockets,...) the threads are executed. Places can be set with the Environment variables OMP_PLACES and the num threads variable could then look like this for 8 places: OMP_NUM_THREADS=4,4
+The developer has the opportunity to decide on how many PLACES(hyperthreads, cores, sockets,...) the threads are executed. Places can be set with the Environment variables OMP_PLACES and the num threads variable could then look like this for 8 places: OMP_NUM_THREADS=4,4 (4,4 means nested: first 4 threds are started and then again 4 -> 16 threads; relevant for example below)
+
+PLACES can also be defined by the developer:
+OMP_PLACES="{0,1},{2,3},{4,5},{6,7},{8,9},{10,11},{12,13},{14,15}" (example)
 
 #### Predifined places:
 
@@ -27,6 +30,8 @@ The developer has the opportunity to decide on how many PLACES(hyperthreads, cor
 
 #### Measurements:
 
+#### Reference Value:
+
 4 Threads basic program, just with -O3: 2.45598
 
 4 Threads with omp parallel for optimization:
@@ -40,64 +45,95 @@ The developer has the opportunity to decide on how many PLACES(hyperthreads, cor
 
 Measure: 0.78777 seconds
 
-2,2 Threads with just omp proc_bind(spread):
+4 Threads with omp proc_bind(spread):
 
 ```c
 #pragma omp parallel proc_bind(spread)
-	for (long i = 0; i < n; i++) {
-		inc++;
-	}
-```
-
-Measure: 2.94504 seconds
--> just proc_bind doesn't do it
-
-Using 2,2 threads omp parallel for and proc_bind(spread) before it:
-
-```c
-#pragma omp parallel proc_bind(spread)
-    #pragma omp parallel for
+	#pragma omp for
 		for (long i = 0; i < n; i++) {
-		    inc++;
+			inc++;
 		}
 ```
 
-Measure: 0.00014 seconds
+Measure:
 
-Trying proc_bind(spread) with proc_bind(close) after it and before omp parallel for:
+| number_of_threads | PLACES=cores(4) | PLACES=threads(4) | PLACES=sockets(4) |
+| ----------------- | --------------- | ----------------- | ----------------- |
+| 2,2               | 0.75619         | 0.75606           | 0.78641           |
+
+4 Threads with just omp proc_bind(close):
+
+```c
+#pragma omp parallel proc_bind(close)
+	#pragma omp for
+		for (long i = 0; i < n; i++) {
+			inc++;
+		}
+```
+
+Measure:
+
+| number_of_threads | PLACES=cores(4) | PLACES=threads(4) | PLACES=sockets(4) |
+| ----------------- | --------------- | ----------------- | ----------------- |
+| 4                 | 0.75309         | 0.75300           | 0.78591           |
+
+4 Threads with just omp proc_bind(master):
+
+```c
+#pragma omp parallel proc_bind(master)
+	#pragma omp for
+		for (long i = 0; i < n; i++) {
+			inc++;
+		}
+```
+
+Measure:
+
+| number_of_threads | PLACES=cores(4) | PLACES=threads(4) | PLACES=sockets(4) |
+| ----------------- | --------------- | ----------------- | ----------------- |
+| 4                 | 2.46937         | 2.47554           | 0.73690           |
+
+-> Master doesn't do anything for cores and threads but works for sockets
+
+Using 2,2 threads omp parallel for and proc_bind(spread) nested with proc_bind(close) before it:
 
 ```c
 #pragma omp parallel proc_bind(spread)
-        #pragma omp parallel proc_bind(close)
-            #pragma omp parallel for
+	#pragma omp parallel proc_bin(close)
+    	#pragma omp for
+			for (long i = 0; i < n; i++) {
+		    	inc++;
+			}
+```
+
+Measure:
+
+| number_of_threads | PLACES=cores(4) | PLACES=threads(4) | PLACES=sockets(4) |
+| ----------------- | --------------- | ----------------- | ----------------- |
+| 4                 | 0.00014         | 0.00010           | 0.00018           |
+
+Using 2,2 threads omp parallel for and proc_bind(spread) nested with proc_bind(master) before it:
+
+```c
+#pragma omp parallel proc_bind(spread)
+        #pragma omp parallel proc_bind(master)
+            #pragma omp for
 		        for (long i = 0; i < n; i++) {
 			        inc++;
 		        }
 ```
 
-Measure: 0.00018
--> so combining proc_bind(close) with proc_bind(spread) doesn't do anything in this case, actually it's a little bit slower
-
-### First Conclusion:
-
-So splitting the threads with proc_bind(spread) and omp parallel for looks like a really good option to optimize the code, because it went from about 2.4 seconds to 0.00014 seconds.
-But what's the best way to define the PLACES?
-
-### Measure PLACES:
+Measure:
 
 | number_of_threads | PLACES=cores(4) | PLACES=threads(4) | PLACES=sockets(4) |
 | ----------------- | --------------- | ----------------- | ----------------- |
-| 2,2               | 0.00015         | 0.00012           | 0.00021           |
+| 4                 | 0.00014         | 0.00010           | 0.00020           |
 
-### Final Conclusion:
+### Conclusion:
 
-So the predifined places as hyperthreads are the fastest in this case. Places can also be defined by the developer like this for example:
-OMP_PLACES="{0,1},{2,3},{4,5},{6,7},{8,9},{10,11},{12,13},{14,15}"
-this would equal 8 places with 2 "slots" each
+So splitting the threads with proc_bind(spread) and proc_bin(close) looks like a really good option to optimize the code, because it went from about 2.4 seconds to 0.00010 seconds.
 
-But the predifined worked quite well in this case, so I used them.
-
-Another thing to mention too is that it is important obviously how many physical cores you have. So if there are more threads than PLACES or cores the developer has to check how they will be placed by using a specififc affinity.
+The version where only proc_bind(master) is used, is in this case not helpful, because it operates like it runs not optimized. proc-bind(master) and also close are good for caching-cases and so on, but i "disabled" it with the volatile int.
 
 ### Resources:
 
