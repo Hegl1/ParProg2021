@@ -3,7 +3,10 @@
 
 int main(int argc, char** argv){
 
-    //plan: make a dynamic programming array in argsize and read solution from it
+    if(argc < 2){
+        printf("usage: ./delanoy.out <gridsize>\n");
+    }
+
 
 
 
