@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 
     double start_time = omp_get_wtime();
     #pragma omp parallel proc_bind(spread)
-		#pragma pmp parallel proc_bin(close)
+		#pragma omp parallel proc_bin(close)
         	#pragma omp for
 		    	for (long i = 0; i < n; i++) {
 			    	inc++;
