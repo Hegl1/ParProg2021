@@ -20,7 +20,7 @@ long calculate_delanoy(int m, int n){
         #pragma omp task shared(j)
             j = calculate_delanoy(m-1, n-1);
         
-        #pragma omp task shared(k)
+        //#pragma omp task shared(k)
             k = calculate_delanoy(m, n-1);
         
         #pragma omp taskwait
@@ -43,7 +43,12 @@ int main(int argc, char** argv){
 
     #ifdef TIME
     double start_time = omp_get_wtime();
-    calculate_delanoy(problem_size, problem_size);
+    #pragma omp parallel
+    {
+        #pragma omp single
+        calculate_delanoy(problem_size, problem_size);
+    }
+
     double end_time = omp_get_wtime();
     printf("time: %2.9f \n",end_time-start_time);
     #endif
