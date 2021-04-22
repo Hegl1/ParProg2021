@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <omp.h>
 
-//TODO optimize
 #define PAR_BORDER 8
 
 long calculate_delanoy(int m, int n){
