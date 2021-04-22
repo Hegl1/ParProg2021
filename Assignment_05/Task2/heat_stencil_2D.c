@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     int source_y = N / 4;
     A[IND(source_x,source_y)] = 273 + 60;
 
-    printf("Initial:");
+    printf("Initial:\n");
     printTemperature(A, N, N);
     printf("\n");
 
@@ -59,11 +59,16 @@ int main(int argc, char **argv) {
 
     // create a second buffer for the computation
     double *B = malloc(sizeof(double) * N * N);
+    double h = 1e-5;
+    double k = 1 / (h*h);
     if(!B) PERROR_GOTO(error_b);
     // for each time step ..
     for (int t = 0; t < T; t++) {
-        // todo implement heat propagation
-        // todo make sure the heat source stays the same
+        for (int i = 1; i < N; i++){
+            for (int j = 1; j < N; j++){
+                B[IND(i,j)] = k*(B[IND(i,j-1)] + B[IND(i,j+1)]+ B[IND(i-1,j)] + B[IND(i+1,j)] - 4*B[IND(i,j)] + B[IND(i,j)]);
+            }
+        }
 
         // every 1000 steps show intermediate step
         if (!(t % 1000)) {
