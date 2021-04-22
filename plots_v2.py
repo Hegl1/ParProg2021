@@ -2,6 +2,14 @@ import matplotlib.pyplot as plt
 import sys
 import os
 
+def plot_runtime_per_input_num(filename, plot_title, output_file_name, start_input_size, input_step_size):
+    ''' Function that plots runtimes per input size.
+        It is assumed that first line in output is start_input_size  and
+        steps between inputs is input_step_size
+    '''
+    titles, curves = _parse_input(filename)
+    _prorduce_input_dependend_line_plot(titles, curves, plot_title, output_file_name, start_input_size, input_step_size)
+
 def plot_runtime_per_thread(filename, plot_title, output_file_name, delta_ref_name = None):
     ''' Function that plots runtimes per thread in a line graph.
         Also supports delta-plotting if delta_ref_name is given
@@ -33,6 +41,14 @@ def print_table(filename, delta_ref_name = None):
     print('\n' + result)
     return result
 
+def print_table_for_var_inputs(filename, start_input_size, input_step_size):
+    titles, curves = _parse_input(filename)
+    result = _build_title_line_for_var_input(titles)
+    result+=_build_spacer_line(len(titles))
+    result+=_build_content_line_for_var_input(curves, start_input_size, input_step_size)
+    print('\n' + result)
+    return result
+
 def _plot_runtime_per_thread(filename, plot_title, output_file_name):
     ''' Private function that generate a runtime/thread plot.
         Multiple lines per plot are supportet.
@@ -48,6 +64,19 @@ def _plot_delta_runtime_per_thread(filename, plot_title, output_file_name, delta
 
     new_titles, new_curves = _construct_delta_lists(filename, delta_ref_name)
     _produce_line_plot(new_titles, new_curves, plot_title, output_file_name)
+
+def _prorduce_input_dependend_line_plot(title_list, curve_list, plot_title, output_file_name, start_input_size, input_step_size):
+    input_size_vec = range(start_input_size, len(curve_list[0])+start_input_size, input_step_size)
+    for curve in curve_list:
+        plt.plot(input_size_vec, curve)
+        plt.scatter(input_size_vec, curve, marker='x')
+    plt.xlabel("Input size")
+    plt.ylabel("Execution time [s]")
+    plt.legend(title_list)
+    plt.title(plot_title)
+    _create_folder_for_graphics()
+    plt.savefig("./plots/" + output_file_name)
+    plt.clf
 
 def _produce_line_plot(title_list, curve_list, plot_title, output_file_name):
     ''' Shared private function used to actually produce the line plot'''
@@ -96,6 +125,24 @@ def _build_spacer_line(number_of_columns):
         result+= ' ---- |'
     result+='\n'
     return result
+
+def _build_content_line_for_var_input(curves, input_start_size, input_step_size):
+    result = ''
+    for i in range(len(curves[0])):
+        result+='| {inpt} |'.format(inpt = input_start_size)
+        input_start_size+=input_step_size
+        for j in range(len(curves)):
+            result += ' ' + str(curves[j][i]) + ' |'
+        result+='\n'
+    return result
+
+def _build_title_line_for_var_input(titles):
+    result = '| Input size |'
+    for title in titles:
+        result+= ' {tit} |'.format(tit=title)
+    result+='\n'
+    return result
+
 
 def _construct_base_line(number_of_entries):
     ''' Private function that generates a list containging the thread numbers'''
