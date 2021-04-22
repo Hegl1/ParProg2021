@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <omp.h>
 
+//TODO optimize
+#define PAR_BORDER 8
+
 long calculate_delanoy(int m, int n){
    
     
@@ -9,7 +12,7 @@ long calculate_delanoy(int m, int n){
         return 1;
     } else{
 
-        if(m < 8 || n < 8){
+        if(m < PAR_BORDER || n < PAR_BORDER){
             return calculate_delanoy(m-1, n) + calculate_delanoy(m-1, n-1) + calculate_delanoy(m, n-1);
         }else{
             long i, j, k;
