@@ -52,12 +52,12 @@ Assuming that the file structure looks like this (*used in our git*):
 plots_v2.py
 assignment_01
 assignment_02
+	|
+	|__Task1
+	|__Task2
 		|
-		|__Task1
-		|__Task2
-				|
-				|__own_plotscript.py
-				|__input_for_plotscript.txt
+		|__own_plotscript.py
+		|__input_for_plotscript.txt
 ```
 
 You can import plots_v2.py in your own script like this:
