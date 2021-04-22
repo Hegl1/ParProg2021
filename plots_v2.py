@@ -76,7 +76,7 @@ def _prorduce_input_dependend_line_plot(title_list, curve_list, plot_title, outp
     plt.title(plot_title)
     _create_folder_for_graphics()
     plt.savefig("./plots/" + output_file_name)
-    plt.clf
+    plt.clf()
 
 def _produce_line_plot(title_list, curve_list, plot_title, output_file_name):
     ''' Shared private function used to actually produce the line plot'''

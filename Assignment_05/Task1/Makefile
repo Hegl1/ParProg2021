@@ -1,5 +1,5 @@
 CFLAGS = -std=gnu11 -Wall -Werror -Wextra -fopenmp -Ofast
-CC = gcc-10
+CC = gcc
 
 .PHONY: all
 all: delannoy_ser delannoy_stupid delannoy_par

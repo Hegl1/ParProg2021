@@ -23,7 +23,6 @@ long calculate_delanoy(int m, int n){
         #pragma omp task shared(j)
             j = calculate_delanoy(m-1, n-1);
         
-        //#pragma omp task shared(k)
             k = calculate_delanoy(m, n-1);
         
         #pragma omp taskwait
