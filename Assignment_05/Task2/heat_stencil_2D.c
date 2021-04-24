@@ -59,14 +59,24 @@ int main(int argc, char **argv) {
 
     // create a second buffer for the computation
     double *B = malloc(sizeof(double) * N * N);
-    double h = 1e-5;
-    double k = 1 / (h*h);
+    //double h = 1e-5;
+    //double k = 1.0 / (h*h);
     if(!B) PERROR_GOTO(error_b);
     // for each time step ..
     for (int t = 0; t < T; t++) {
-        for (int i = 1; i < N; i++){
-            for (int j = 1; j < N; j++){
-                B[IND(i,j)] = k*(B[IND(i,j-1)] + B[IND(i,j+1)]+ B[IND(i-1,j)] + B[IND(i+1,j)] - 4*B[IND(i,j)] + B[IND(i,j)]);
+        for (int i = 0; i < N; i++){
+            for (int j = 0; j < N; j++){
+                if (i == 0){
+                    B[IND(i,j)] = A[IND(i,j)] + A[IND(i+1,j)]+ A[IND(i,j-1)] + A[IND(i,j+1)] - 4*A[IND(i,j)];
+                }else if(j == 0){
+                    B[IND(i,j)] = A[IND(i-1,j)] + A[IND(i+1,j)]+ A[IND(i,j)] + A[IND(i,j+1)] - 4*A[IND(i,j)]; 
+                }else{
+                    B[IND(i,j)] = A[IND(i-1,j)] + A[IND(i+1,j)]+ A[IND(i,j-1)] + A[IND(i,j+1)] - 4*A[IND(i,j)];
+                }
+
+                if(i != source_x && j != source_y){
+                   A[IND(i,j)] += B[IND(i,j)];
+                }
             }
         }
 
