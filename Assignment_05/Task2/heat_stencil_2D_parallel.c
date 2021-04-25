@@ -67,6 +67,7 @@ int main(int argc, char **argv) {
     if(!B) PERROR_GOTO(error_b);
     // for each time step ..
     for (int t = 0; t < T; t++) {
+        #pragma omp parallel for default(none) shared(A,B) firstprivate(source_x, source_y,N) collapse(2)
         for (int i = 0; i < N; i++){
             for (int j = 0; j < N; j++){
 

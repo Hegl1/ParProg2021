@@ -1,0 +1,24 @@
+Threads: 1
+
+Threads : 1 sequentiell
+Computing heat-distribution for room size 500X500 for T=5000 timesteps
+Elapsed Time: 11.45433
+Verification: OK
+
+Threads : 1 parallel
+Computing heat-distribution for room size 500X500 for T=5000 timesteps
+Elapsed Time: 14.48820
+Verification: OK
+
+Threads: 8
+
+Threads : 8 sequentiell
+Computing heat-distribution for room size 500X500 for T=5000 timesteps
+Elapsed Time: 11.35226
+Verification: OK
+
+Threads : 8 parallel
+Computing heat-distribution for room size 500X500 for T=5000 timesteps
+Elapsed Time: 1.89978
+Verification: OK
+rm -f heat_stencil_2D.out heat_stencil_2D_parallel.out
