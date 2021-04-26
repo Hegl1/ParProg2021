@@ -1,0 +1,24 @@
+*
+heat_stencil_2D.c
+-
+time: 0.08420
+-
+time: 0.77569
+-
+time: 2.41044
+-
+time: 6.19729
+-
+time: 11.34769
+*
+heat_stencil_2D_parallel.c
+-
+time: 0.03282
+-
+time: 0.13773
+-
+time: 0.42669
+-
+time: 0.97009
+-
+time: 1.89605

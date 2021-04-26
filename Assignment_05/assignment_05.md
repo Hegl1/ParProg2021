@@ -3,9 +3,9 @@ by Tobias Hosp, Marcel Alexander Huber and Thomas Klotz
 
 ## Task 1
 
-### Sequencial implementation, first try
+### Sequential implementation, first try
 
-A dynamic programming approach has been chosen for the first sequencial implementation.
+A dynamic programming approach has been chosen for the first sequential implementation.
 
 ```c
 #include <stdio.h>
@@ -53,7 +53,7 @@ int main(int argc, char** argv){
 
 ```
 
-### Sequencial implementation, second try
+### Sequential implementation, second try
 
 Although this leads to **superior** execution times, we chose to implement a naive recursive implementation, because parallelizing the first approach was way too hard for way too less benefit.
 
@@ -189,7 +189,7 @@ First lets have a look at the parallel version. The following plot shows the run
 
 With this implementation, speedup at 8 threads is $S = \frac{Runtime\ with\ one\ thread}{Runitme\ with\ eight\ threads} = \frac{63.069}{10.854} = 5.81 $ . 
 
-Lets compare the parallel version with the sequencial versions of the program. The following plot shows all three versions of the program with execution times / varying inputs sizes. Note that ``Delannoy_stupid.c`` is the naive recursive variant and ```Delannoy_ser.c``` is the dynamic programming variant.
+Lets compare the parallel version with the sequential versions of the program. The following plot shows all three versions of the program with execution times / varying inputs sizes. Note that ``Delannoy_stupid.c`` is the naive recursive variant and ```Delannoy_ser.c``` is the dynamic programming variant.
 
 ![var_inputs](Task1/plots/var_inputs.png)
 
@@ -211,11 +211,76 @@ Lets compare the parallel version with the sequencial versions of the program. T
 
 We observed the following:
 
-- For input sizes < 8 the times of the parallel and naive sequencial implementation should be roughly the same. However, the parallel version seems to be slower for these input sizes. This is probably due to OMP overhead.
-- Relevant speedup for serial vs parallel can be observed for input porblems > 13. For smaller input problems, speedup is very tiny.
+- For input sizes < 8 the times of the parallel and naive sequential implementation should be roughly the same. However, the parallel version seems to be slower for these input sizes. This is probably due to OMP overhead.
+- Relevant speedup for serial vs parallel can be observed for input problems > 13. For smaller input problems, speedup is very tiny.
 - The dynamic programming variant is significantly faster then both other variants in all cases.
 
 ### Conclusion
 
 Although parallelism is a great option for making programs run faster, it is not always the best solution. Sometimes a better algorithm (like the dynamic programming one) is far superior compared to a parallelized naive algorithm.
 
+
+
+## Task 2
+
+To calculate the temperature of a field, the temperature of the neighbor fields are getting drawn in. So for the whole grid (2D array) of fields this is done for every field with every time step. This results in two for loops which are independent of each other, thus the operation can get parallelized with the usage of the ``collapse`` statement. Additionally the 2D arrays ``A`` and ``B`` get declared as ``shared`` and the coordinates of the source and the size of the array get declared as ``firstprivate``.
+
+```c
+for (int t = 0; t < T; t++) {
+    #pragma omp parallel for default(none) shared(A,B) firstprivate(source_x, source_y,N) collapse(2)
+    for (int i = 0; i < N; i++){
+        for (int j = 0; j < N; j++){            
+		   if(i == source_x && j == source_y){
+                B[IND(i,j)] = A[IND(i,j)];
+                continue;
+            } 
+
+            double leftNeighbour = getValue((i-1),j,A,N);
+            double rightNeighbour = getValue((i+1),j,A,N);
+            double topNeighbour = getValue(i,(j-1),A,N);
+            double bottomNeighbour = getValue(i,(j+1),A,N);
+
+            B[IND(i,j)] = (leftNeighbour + rightNeighbour + topNeighbour + bottomNeighbour)/4.0;
+        }
+    }
+    double* temp;
+    temp = B;
+    B = A;
+    A = temp;
+}
+```
+
+### Time measurements for different thread counts
+
+With increasing count of threads the execution time gets reduced drastically. The scaling seems pretty ideal.
+
+![var_threads](Task2/plots/var_threads.png)
+
+| Number of threads | heat_stencil_2D_parallel.c |
+| ----------------- | -------------------------- |
+| 0                 | 14.45732                   |
+| 1                 | 7.24219                    |
+| 2                 | 4.83667                    |
+| 3                 | 3.64234                    |
+| 4                 | 2.92593                    |
+| 5                 | 2.44938                    |
+| 6                 | 2.12228                    |
+| 7                 | 1.89677                    |
+
+### Time measurements for different problem sizes
+![var_inputs](Task2/plots/var_inputs.png)
+
+| Input size | heat_stencil_2D.c | heat_stencil_2D_parallel.c |
+| ---------- | ----------------- | -------------------------- |
+| 100        | 0.0842            | 0.03282                    |
+| 200        | 0.77569           | 0.13773                    |
+| 300        | 2.41044           | 0.42669                    |
+| 400        | 6.19729           | 0.97009                    |
+| 500        | 11.34769          | 1.89605                    |
+
+
+
+Speedup for problem size N=500 and 8 threads:
+$$
+Speedup = \frac{11.34569s}{1.89605s} \approx 5.98
+$$

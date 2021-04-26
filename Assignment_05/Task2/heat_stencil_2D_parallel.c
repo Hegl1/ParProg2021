@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
         N = atoi(argv[1]);
     }
     int T = N * 10;
-    printf("Computing heat-distribution for room size %dX%d for T=%d timesteps\n", N, N, T);
+    //printf("Computing heat-distribution for room size %dX%d for T=%d timesteps\n", N, N, T);
 
     // ---------- setup ----------
 
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
     // printf("Final:");
     // printTemperature(A, N, N);
     // printf("\n");
-    printf("Elapsed Time: %2.5f\n", (endtime - startTime));
+    printf("time: %2.5f\n", (endtime - startTime));
 
     // simple verification if nowhere the heat is more then the heat source
     int success = 1;
@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    printf("Verification: %s\n", (success) ? "OK" : "FAILED");
+    // printf("Verification: %s\n", (success) ? "OK" : "FAILED");
 
     // todo ---------- cleanup ----------
     error_b:
