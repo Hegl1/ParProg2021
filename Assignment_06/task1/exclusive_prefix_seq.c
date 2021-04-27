@@ -4,7 +4,7 @@
 
 void print_array(int32_t* array, int size);
 void initialize_array(int32_t* array, int size);
-void calculate_perfix_sum(int32_t* a, int32_t* b, int size);
+void calculate_prefix_sum(int32_t* a, int32_t* b, int size);
 
 
 int main(int argc, char** argv){
@@ -20,7 +20,7 @@ int main(int argc, char** argv){
     int32_t a[problem_size];
     int32_t b[problem_size];
     initialize_array(a, problem_size);
-    calculate_perfix_sum(a, b, problem_size);
+    calculate_prefix_sum(a, b, problem_size);
     double end_time = omp_get_wtime();
     #ifdef TIME
     printf("time: %2.9f\n", end_time-start_time);
@@ -44,7 +44,7 @@ void initialize_array(int32_t* array, int size){
     }
 }
 
-void calculate_perfix_sum(int32_t* a, int32_t* b, int size){
+void calculate_prefix_sum(int32_t* a, int32_t* b, int size){
     b[0] = 0;
     for(int i = 1; i<size; i++){
         b[i] = b[i-1]+a[i-1];
