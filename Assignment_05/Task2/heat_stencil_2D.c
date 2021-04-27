@@ -53,17 +53,15 @@ int main(int argc, char **argv) {
     int source_y = N / 4;
     A[IND(source_x,source_y)] = 273 + 60;
 
-    // printf("Initial:\n");
-    // printTemperature(A, N, N);
-    // printf("\n");
+    printf("Initial:\n");
+    printTemperature(A, N, N);
+    printf("\n");
 
     // ---------- compute ----------
     double startTime =  omp_get_wtime();
 
     // create a second buffer for the computation
     double *B = malloc(sizeof(double) * N * N);
-    //double h = 1e-5;
-    //double k = 1.0 / (h*h);
     if(!B) PERROR_GOTO(error_b);
     // for each time step ..
     for (int t = 0; t < T; t++) {
@@ -91,21 +89,21 @@ int main(int argc, char **argv) {
         B = A;
         A = temp;
 
-        // every 1000 steps show intermediate step
-        // if (!(t % 1000)) {
-        //     printf("Step t=%d\n", t);
-        //     printTemperature(A, N, N);
-        //     printf("\n");
-        // }
+        //every 1000 steps show intermediate step
+        if (!(t % 1000)) {
+            printf("Step t=%d\n", t);
+            printTemperature(A, N, N);
+            printf("\n");
+        }
     }
 
 
     // ---------- check ----------
     double endtime = omp_get_wtime();
 
-    // printf("Final:");
-    // printTemperature(A, N, N);
-    // printf("\n");
+    printf("Final:");
+    printTemperature(A, N, N);
+    printf("\n");
     printf("time: %2.5f\n", (endtime - startTime));
 
     // simple verification if nowhere the heat is more then the heat source
