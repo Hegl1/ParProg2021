@@ -47,7 +47,7 @@ int is_attack(int i, int j, int *board, int N) {
         l = l - 1;
     }
 
-  return 0;
+    return 0;
 }
 
 int n_queen(int row, int n, int N, int *board) {
@@ -57,13 +57,13 @@ int n_queen(int row, int n, int N, int *board) {
 
     for (int j = 1; j <= N; j++) {
         if(!is_attack(row, j, board, N)) {
-            board[IND(row,j)] = 1;
+            board[IND(row,j)] = 1;  
             if (n_queen(row + 1, n - 1, N, board)){
                 return 1;
-            }
+            }   
             board[IND(row,j)] = 0; //backtracking
         }
-    }
+    } 
     return 0;
 }
 
@@ -77,19 +77,14 @@ int main(int argc, char **argv) {
     int *board =  malloc(sizeof(double) * N * N);
 
     for(int i = 0; i < N; i++) {
-        for(int j = 0; j < N; j++){
+        for(int j=0; j< N; j++){
             board[IND(i,j)] = 0;
         }
     }
 
-    int sum = 0;
-
-    for(int i = 0; i < N; i++){
-        sum += n_queen(1, N, N, board);
-    }
+    n_queen(1, N, N, board);
 
     printMatrix(N,board);
-    printf("\nSolutions: %d\n", sum);
 
     free(board);
     return 0;
