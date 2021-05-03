@@ -1,0 +1,54 @@
+*
+Parallel version, input = 8
+-
+time: 0.00548
+-
+time: 0.00437
+-
+time: 0.00110
+-
+time: 0.00112
+-
+time: 0.00599
+-
+time: 0.00115
+-
+time: 0.00115
+-
+time: 0.00114
+*
+Parallel version, input = 10
+-
+time: 0.01400
+-
+time: 0.01856
+-
+time: 0.01776
+-
+time: 0.01484
+-
+time: 0.01472
+-
+time: 0.01566
+-
+time: 0.01472
+-
+time: 0.01492
+*
+Parallel version, input = 12
+-
+time: 0.30710
+-
+time: 0.30022
+-
+time: 0.30964
+-
+time: 0.29864
+-
+time: 0.31172
+-
+time: 0.30638
+-
+time: 0.30264
+-
+time: 0.30616
