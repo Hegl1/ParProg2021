@@ -5,5 +5,5 @@ spec.loader.exec_module(plot)
 
 OUT_FILE = 'job-print.dat'
 
-plot.plot_runtime_per_thread(OUT_FILE)
+plot.plot_runtime_per_thread(OUT_FILE, 'N Queens parallel, various input sizes', 'n_queens_plot')
 plot.print_table(OUT_FILE)
