@@ -1,0 +1,86 @@
+##############SEQUENTIELL####################
+
+N = 8:
+
+Number of solutions: 92
+Execution time: 0.00026
+
+N = 10:
+
+Number of solutions: 724
+Execution time: 0.00671
+
+N = 12:
+
+Number of solutions: 14200
+Execution time: 0.21284
+
+##############PARALLEL####################
+
+Threads: 1
+
+Threads : 1 N=8 parallel
+
+Number of solutions: 92
+Execution time: 0.00482
+
+Threads : 1 N=10 parallel
+
+Number of solutions: 724
+Execution time: 0.00226
+
+Threads : 1 N=12 parallel
+
+Number of solutions: 14200
+Execution time: 0.06667
+
+Threads: 2
+
+Threads : 2 N=8 parallel
+
+Number of solutions: 92
+Execution time: 0.00038
+
+Threads : 2 N=10 parallel
+
+Number of solutions: 724
+Execution time: 0.00226
+
+Threads : 2 N=12 parallel
+
+Number of solutions: 14200
+Execution time: 0.07366
+
+Threads: 4
+
+Threads : 4 N=8 parallel
+
+Number of solutions: 92
+Execution time: 0.00327
+
+Threads : 4 N=10 parallel
+
+Number of solutions: 724
+Execution time: 0.00605
+
+Threads : 4 N=12 parallel
+
+Number of solutions: 14200
+Execution time: 0.07190
+
+Threads: 8
+
+Threads : 8 N=8 parallel
+
+Number of solutions: 92
+Execution time: 0.00039
+
+Threads : 8 N=10 parallel
+
+Number of solutions: 724
+Execution time: 0.00367
+
+Threads : 8 N=12 parallel
+
+Number of solutions: 14200
+Execution time: 0.07055
