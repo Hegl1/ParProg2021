@@ -2,13 +2,17 @@ import matplotlib.pyplot as plt
 import sys
 import os
 
-def plot_runtime_per_input_num(filename, plot_title, output_file_name, start_input_size, input_step_size):
+def plot_runtime_per_input_num(filename, plot_title, output_file_name, start_input_size, input_step_size, delta_ref_name = None, y_axis_title = None):
     ''' Function that plots runtimes per input size.
         It is assumed that first line in output is start_input_size  and
         steps between inputs is input_step_size
     '''
-    titles, curves = _parse_input(filename)
-    _prorduce_input_dependend_line_plot(titles, curves, plot_title, output_file_name, start_input_size, input_step_size)
+    if delta_ref_name is None:
+        titles, curves = _parse_input(filename)
+    else:
+        titles, curves = _construct_delta_lists(filename, delta_ref_name)
+
+    _prorduce_input_dependend_line_plot(titles, curves, plot_title, output_file_name, start_input_size, input_step_size, y_axis_title)
 
 def plot_runtime_per_thread(filename, plot_title, output_file_name, delta_ref_name = None):
     ''' Function that plots runtimes per thread in a line graph.
@@ -65,13 +69,14 @@ def _plot_delta_runtime_per_thread(filename, plot_title, output_file_name, delta
     new_titles, new_curves = _construct_delta_lists(filename, delta_ref_name)
     _produce_line_plot(new_titles, new_curves, plot_title, output_file_name)
 
-def _prorduce_input_dependend_line_plot(title_list, curve_list, plot_title, output_file_name, start_input_size, input_step_size):
-    input_size_vec = range(start_input_size, len(curve_list[0])+start_input_size, input_step_size)
+def _prorduce_input_dependend_line_plot(title_list, curve_list, plot_title, output_file_name, start_input_size, input_step_size, y_axis_title):
+    input_size_vec = range(start_input_size, len(curve_list[0])*start_input_size + start_input_size, input_step_size)
+    y_axis = y_axis_title if y_axis_title is not None else "Execution time [s]"
     for curve in curve_list:
         plt.plot(input_size_vec, curve)
         plt.scatter(input_size_vec, curve, marker='x')
     plt.xlabel("Input size")
-    plt.ylabel("Execution time [s]")
+    plt.ylabel(y_axis)
     plt.legend(title_list)
     plt.title(plot_title)
     _create_folder_for_graphics()
@@ -184,7 +189,7 @@ def _construct_delta_lists(filename, delta_ref_name):
     for curve in curves:
         temp = list()
         for i in range(len(curve)):
-            temp.append(ref_list[i] - curve[i])
+            temp.append(ref_list[i] / curve[i])
         new_curves.append(temp)
     return(new_titles, new_curves)
 
