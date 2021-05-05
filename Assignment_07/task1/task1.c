@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
+#include <string.h>
 
 #define REPETITIONS 1e6
 
@@ -11,13 +12,13 @@ void print_output();
 
 int main(int argc, char** argv){
 
-    int size=0;
+    int size = 0;
 
     if(argc < 2){
         printf("usage: task1.out <vector_size>\n");
         return EXIT_FAILURE;
     }else{
-        size = atol(argv[1]);
+        size = strtol(argv[1], NULL, 0);
     }
 
     float a[size], b[size], c[size];

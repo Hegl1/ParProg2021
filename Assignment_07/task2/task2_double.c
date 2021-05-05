@@ -5,9 +5,9 @@
 
 #define REPETITIONS 1e6
 
-void init_array(float*, int, float);
-void calculate_array(float*, float*, float*, int);
-void print_array(float*, int);
+void init_array(double*, int, double);
+void calculate_array(double*, double*, double*, int);
+void print_array(double*, int);
 void print_output();
 
 int main(int argc, char** argv){
@@ -16,10 +16,10 @@ int main(int argc, char** argv){
         printf("usage: task1.out <vector_size>\n");
         return EXIT_FAILURE;
     }
-    
+
     const int size = strtol(argv[1], NULL, 0);
 
-    float a[size], b[size], c[size];
+    double a[size], b[size], c[size];
     init_array(a, size, 0);
     init_array(b, size, 1);
     init_array(c, size, 2);
@@ -33,21 +33,22 @@ int main(int argc, char** argv){
     return EXIT_SUCCESS;
 }
 
-void init_array(float* arr, int size, float init_num){
+void init_array(double* arr, int size, double init_num){
     for(int i = 0; i<size; ++i){
         arr[i] = init_num;
     }
 }
 
-void calculate_array(float* a, float* b, float* c, int size){
+void calculate_array(double* a, double* b, double* c, int size){
     for(int run = 0; run < REPETITIONS; run++){
+        #pragma omp simd aligned(a, b, c : 16)
         for(int i = 0; i<size; ++i){
             a[i] += b[i] * c[i];
         }
     }
 }
 
-void print_array(float* arr, int size){
+void print_array(double* arr, int size){
     printf("[ ");
     for(int i = 0; i<size; i++){
         printf("%.2f ", arr[i]);
@@ -55,11 +56,11 @@ void print_array(float* arr, int size){
     printf("]\n");
 }
 
-void print_output(double start_time, double end_time, float* arr, int size){
+void print_output(double start_time, double end_time, double* arr, int size){
     #ifdef TIMES
         printf("time: %.4f\n", end_time - start_time);
     #else
         printf("time: %.4f ", end_time - start_time);
         print_array(arr, size);
-    #endif 
+    #endif
 }

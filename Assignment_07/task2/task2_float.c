@@ -16,7 +16,7 @@ int main(int argc, char** argv){
         printf("usage: task1.out <vector_size>\n");
         return EXIT_FAILURE;
     }
-    
+
     const int size = strtol(argv[1], NULL, 0);
 
     float a[size], b[size], c[size];
@@ -41,6 +41,7 @@ void init_array(float* arr, int size, float init_num){
 
 void calculate_array(float* a, float* b, float* c, int size){
     for(int run = 0; run < REPETITIONS; run++){
+        #pragma omp simd aligned(a, b, c : 16)
         for(int i = 0; i<size; ++i){
             a[i] += b[i] * c[i];
         }
@@ -61,5 +62,5 @@ void print_output(double start_time, double end_time, float* arr, int size){
     #else
         printf("time: %.4f ", end_time - start_time);
         print_array(arr, size);
-    #endif 
+    #endif
 }
