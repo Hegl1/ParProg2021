@@ -25,13 +25,4 @@ module load gcc/10.3.0
 # Set up any environment variables
 export OMP_NUM_THREADS=1
 
-make times_no_vec
-printf "\nREFERENCE\n"
-./task2.out 2048
-make times_no_vec_float
-printf "\nFLOAT\n"
-./task2_float.out 2048
-make times_no_vec_double
-printf "\nDOUBLE\n"
-./task2_double.out 2048
-make clean
+sh execute.sh
