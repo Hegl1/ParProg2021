@@ -2,32 +2,32 @@
 *
 Reference
 -
-time: 2.4802
+time: 2.4803
 -
-time: 5.4446
+time: 5.7930
 -
-time: 8.4325
+time: 8.4365
 -
-time: 11.4564
+time: 11.3653
 -
-time: 14.3001
+time: 14.6792
 -
-time: 16.8802
+time: 17.1076
 -
-time: 20.0445
+time: 19.6561
 *
-Speedup vectorized variant
+compiled with vectorization
 -
-time: 1.7236
+time: 1.7238
 -
-time: 4.6660
+time: 4.6847
 -
-time: 7.3866
+time: 7.3953
 -
-time: 9.8212
+time: 9.8444
 -
-time: 12.2855
+time: 12.3173
 -
-time: 14.7277
+time: 14.8477
 -
-time: 17.1903
+time: 17.2127
