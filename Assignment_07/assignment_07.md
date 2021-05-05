@@ -46,7 +46,11 @@ To enable vectorization, the compiler flag ```-ftree-vectorize ``` was added to 
 
 ### Perf
 
-The only event with a relevant counter reading was ```SIMD_INST_RETIRED.VECTOR```, with a reading of **3,584,000,124**.
+The reading for ```SIMD_INST_RETIRED.VECTOR``` was **3,584,000,124**.
+The reading for ```SIMD_INST_RETIRED.SCALAR_DOUBLE``` was **4,097,000,054**.
+Both readings surpass the number of iterations in the main loop by far, which leads us to the conclusion that something is odd about the code.
+We did not find a proper explanation for the readings though.
+
 
 ### Useful resources
 
