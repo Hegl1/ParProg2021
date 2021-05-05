@@ -1,4 +1,20 @@
 *
+Reference
+-
+time: 2.4803
+-
+time: 5.7930
+-
+time: 8.4365
+-
+time: 11.3653
+-
+time: 14.6792
+-
+time: 17.1076
+-
+time: 19.6561
+*
 OMP vectorized float variant
 -
 time: 0.6273
@@ -14,19 +30,3 @@ time: 6.7916
 time: 8.1644
 -
 time: 9.4978
-*
-OMP vectorized double variant
--
-time: 2.3241
--
-time: 5.4368
--
-time: 8.1459
--
-time: 10.8549
--
-time: 13.5741
--
-time: 16.3016
--
-time: 19.0122
