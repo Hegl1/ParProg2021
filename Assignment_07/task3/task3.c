@@ -28,9 +28,9 @@ int main(int argc, char** argv){
     init_array(b, size, 1);
     init_array(c, size, 2);
 
-    posix_memalign(&a, 32, size);
-    posix_memalign(&b, 32, size);
-    posix_memalign(&c, 32, size);
+    posix_memalign((void*) &a, 32, size);
+    posix_memalign((void*) &b, 32, size);
+    posix_memalign((void*) &c, 32, size);
 
     double start_time = omp_get_wtime();
     calculate_array(a, b, c, size);
