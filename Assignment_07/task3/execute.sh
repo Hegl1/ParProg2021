@@ -1,9 +1,9 @@
 #!/bin/bash
 
-make times_vec > /dev/null
+make times > /dev/null
 
 echo "*"
-echo "Speedup vectorized variant"
+echo "title"
 
 for ((COUNTER=2048; COUNTER<=14336; COUNTER+=2048));
 do
