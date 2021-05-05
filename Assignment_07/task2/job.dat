@@ -1,0 +1,19 @@
+#############FLOAT################################
+
+REFERENCE
+time: 2.4801
+
+OMP simd aligned 16
+time: 0.6270
+
+###############DOUBLE####################
+
+REFERENCE
+time: 3.8148
+
+OMP simd aligned 16
+time: 2.3218
+
+OMP simd without aligned
+DOUBLE
+time: 4.7067
