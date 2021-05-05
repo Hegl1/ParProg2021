@@ -15,7 +15,7 @@ int main(int argc, char** argv){
     int size=0;
 
     if(argc < 2){
-        printf("usage: task1.out <vector_size>\n");
+        printf("usage: task3.out <vector_size>\n");
         return EXIT_FAILURE;
     }else{
         size = atol(argv[1]);
@@ -42,23 +42,19 @@ void init_array(float* arr, int size, float init_num){
 }
 
 void calculate_array(float* a, float* b, float* c, int size){
-    
     __m128 a_128;
-    __m128 a_temp_128;
-
     __m128 b_128;
     __m128 c_128;
     __m128 temp_128;
     
     for(int run=0; run<REPETITIONS; ++run){
         for(int i = 0; i<size; i+=4){
-            
-            a_temp_128 = a_128 = _mm_load_ps(&a[i]);
+            a_128 = _mm_load_ps(&a[i]);
             b_128 = _mm_load_ps(&b[i]);
             c_128 = _mm_load_ps(&c[i]);
             
         	temp_128 = _mm_mul_ps(b_128, c_128);
-            a_128 = _mm_add_ps(a_temp_128, temp_128);
+            a_128 = _mm_add_ps(a_128, temp_128);
 
             _mm_store_ps(&a[i], a_128);
         }
