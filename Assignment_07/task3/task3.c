@@ -47,11 +47,10 @@ void calculate_array(float* a, float* b, float* c, int size){
    	
     for(int i = 0; i<size; i+=4) { 
         a_128 = _mm_load_ps(&a[i]);
+        b_128 = _mm_load_ps(&b[i]);
+        c_128 = _mm_load_ps(&c[i]);
             
-        for(int run = 0; run<REPETITIONS; ++run){
-	    b_128 = _mm_load_ps(&b[i]);
-            c_128 = _mm_load_ps(&c[i]);
-
+        for(int run = 0; run<REPETITIONS; ++run){    
             a_128 = _mm_add_ps(a_128, _mm_mul_ps(b_128, c_128));
         }
         _mm_store_ps(&a[i], a_128);
