@@ -1,0 +1,17 @@
+  Loading gcc/10.3.0
+*
+Speedup vectorized variant
+-
+time: 0.6270
+-
+time: 2.3438
+-
+time: 4.1014
+-
+time: 5.4404
+-
+time: 6.8023
+-
+time: 8.1509
+-
+time: 9.4942
