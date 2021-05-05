@@ -14,3 +14,19 @@ time: 20.2895
 time: 24.3465
 -
 time: 28.3404
+*
+OMP vectorized double variant
+-
+time: 2.3241
+-
+time: 5.4368
+-
+time: 8.1459
+-
+time: 10.8549
+-
+time: 13.5741
+-
+time: 16.3016
+-
+time: 19.0122
