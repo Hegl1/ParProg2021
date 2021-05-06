@@ -18,7 +18,7 @@ void calculate_array(float* a, float* b, float* c, int size){
 Compiled with: 
 
 ```makefile
-gcc -std=gnu11 -fopenmp -O1 -D TIMES -ftree-vectorize 
+gcc -std=gnu11 -fopenmp -O1 -D TIMES -ftree-vectorize -msse4.1
 ```
 
 ### Enable Vectorization
@@ -29,15 +29,15 @@ To enable vectorization, the compiler flag ```-ftree-vectorize ``` was added to 
 
 ![speedup_task1](task1/plots/speedup_task1.png)
 
-| Input size | compiled without vectorization | compiled with vectorization |
-| :--: | :--: | :--: |
-| 2048 | 2.4803 | 1.7238 |
-| 4096 | 5.793 | 4.6847 |
-| 6144 | 8.4365 | 7.3953 |
-| 8192 | 11.3653 | 9.8444 |
-| 10240 | 14.6792 | 12.3173 |
-| 12288 | 17.1076 | 14.8477 |
-| 14336 | 19.6561 | 17.2127 |
+| Input size | Compiled without vectorization | Compiled with vectorization |
+| ---- | ---- | ---- |
+| 2048 | 2.4803 | 1.725 |
+| 4096 | 5.793 | 4.6677 |
+| 6144 | 8.4365 | 7.4088 |
+| 8192 | 11.3653 | 9.8276 |
+| 10240 | 14.6792 | 12.2802 |
+| 12288 | 17.1076 | 14.7419 |
+| 14336 | 19.6561 | 17.2051 |
 
 ### Obersvations
 
@@ -46,10 +46,11 @@ To enable vectorization, the compiler flag ```-ftree-vectorize ``` was added to 
 
 ### Perf
 
-The reading for ```SIMD_INST_RETIRED.VECTOR``` was **3,584,000,124**.
-The reading for ```SIMD_INST_RETIRED.SCALAR_DOUBLE``` was **4,097,000,054**.
-Both readings surpass the number of iterations in the main loop by far, which leads us to the conclusion that something is odd about the code.
-We did not find a proper explanation for the readings though.
+The reading for ```SIMD_INST_RETIRED.VECTOR``` was **2.048.001.673**.
+The reading for ```SIMD_INST_RETIRED.SCALAR_DOUBLE``` was **2.048.001.592**.
+Both counters are roughly equal to the number of compute loop iterations. 
+In our expectation the number should be lower then the number of loop iterations to archieve proper speedup.
+We can not explain this behaviour.
 
 
 ### Useful resources
@@ -58,5 +59,5 @@ We did not find a proper explanation for the readings though.
 
 [Stackoverflow for vectorization flag](https://stackoverflow.com/questions/51232100/gcc-auto-vectorization)
 
-
+[Instructions to enable specific SIMD instructions in gcc](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html)
 

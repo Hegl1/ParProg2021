@@ -1,7 +1,7 @@
 FLAGS = -std=gnu11 -Wall -Wextra -fopenmp -O1
 TIMEFLAGS = -std=gnu11 -fopenmp -O1 -D TIMES
 VEC_FLAGS = $(FLAGS) -ftree-vectorize 
-VEC_TIMEFLAGS = $(TIMEFLAGS) -ftree-vectorize 
+VEC_TIMEFLAGS = $(TIMEFLAGS) -ftree-vectorize -msse4.1
 
 CC = gcc
 

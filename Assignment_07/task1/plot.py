@@ -5,5 +5,5 @@ spec.loader.exec_module(plot)
 
 OUT_FILE = 'output_task_1.dat'
 
-plot.plot_runtime_per_input_num(OUT_FILE, "Speedup for vectorized versions, various inputs", "speedup_task1", 2048, 2048, 'Reference', 'Speedup')
+plot.plot_runtime_per_input_num(OUT_FILE, "Speedup for vectorized program, various inputs", "speedup_task1", 2048, 2048, 'Reference', 'Speedup')
 plot.print_table_for_var_inputs(OUT_FILE, 2048, 2048)
