@@ -46,11 +46,19 @@ To enable vectorization, the compiler flag ```-ftree-vectorize ``` was added to 
 
 ### Perf
 
-The reading for ```SIMD_INST_RETIRED.VECTOR``` was **2.048.001.673**.
-The reading for ```SIMD_INST_RETIRED.SCALAR_DOUBLE``` was **2.048.001.592**.
-Both counters are roughly equal to the number of compute loop iterations. 
-In our expectation the number should be lower then the number of loop iterations to archieve proper speedup.
-We can not explain this behaviour.
+Results for the perf measured events with an input size of 2048:
+
+| Event | Value |
+| --- | --- |
+| SIMD_INST_RETIRED.PACKED_SINGLE | 1,024,001,590 |
+| SIMD_INST_RETIRED.SCALAR_SINGLE | 2 |
+| SIMD_INST_RETIRED.PACKED_DOUBLE | 0 |
+| SIMD_INST_RETIRED.SCALAR_DOUBLE | 4,097,000,054 |
+| SIMD_INST_RETIRED.VECTOR | 3,584,000,126 |
+| SIMD_INST_RETIRED.ALL | 5,121,001,732 |
+
+The relevant information is SIMD_INST_RETIRED.PACKED_SINGLE, since this event describes, how many operations are vectorized operations for single percision floating point numbers (floats). Since this number is roughly half of the iterations in the compute loop, we would expect a speedup of ~2.
+At this point we do not know why we do not get a speedup of 2, nor do we know why there is such a high count of scalar double, although there are nearly no doubles used in the code.
 
 
 ### Useful resources
