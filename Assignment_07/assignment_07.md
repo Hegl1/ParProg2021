@@ -94,7 +94,7 @@ The pragma with simd (single instruction multiple data) passes the following ope
 
 ### Results
 
-![speedup_task2_float](task1/plots/speedup_task2_float.png)
+![speedup_task2_float](task2/plots/speedup_task2_float.png)
 
 | Input size | Reference | OMP vectorized float variant |
 | ---------- | --------- | ---------------------------- |
@@ -106,7 +106,7 @@ The pragma with simd (single instruction multiple data) passes the following ope
 | 12288      | 17.1076   | 8.1644                       |
 | 14336      | 19.6561   | 9.4978                       |
 
-![speedup_task2_double](task1/plots/speedup_task2_double.png)
+![speedup_task2_double](task2/plots/speedup_task2_double.png)
 
 | Input size | DOUBLE REFERENCE | OMP vectorized double variant |
 | ---------- | ---------------- | ----------------------------- |
@@ -140,3 +140,107 @@ so every operation on float variable is vectorized, cause float variables are on
 ### Comparing to Task1
 
 We get a much better speedup for float variabels compared to task1, so doing vectorization by yourself might be more work and has to be done correctly obviously, but will pay off, if it's well implemented.
+
+
+
+## Task 3
+
+### Relevant code
+
+In task 3 the code should get optimized by using intrinsics. With intrinsics it is possible to load and store, and for instance add and multiply 4 values of an array at a time.
+
+The given code using intrinsics:
+
+```c
+void calculate_array(float* a, float* b, float* c, int size){
+    __m128 a_128;
+    __m128 b_128;
+    __m128 c_128;
+   	
+    for(int run = 0; run<REPETITIONS; ++run){
+    	for(int i = 0; i<size; i+=4) { 
+        	a_128 = _mm_load_ps(&a[i]);
+            b_128 = _mm_load_ps(&b[i]);
+            c_128 = _mm_load_ps(&c[i]);
+            a_128 = _mm_add_ps(a_128, _mm_mul_ps(b_128, c_128));
+            _mm_store_ps(&a[i], a_128);
+         }
+    }
+}
+```
+
+### Optimized code   	
+
+To reduce load and store operations, the order of the loops can be swapped.
+
+The given code using intrinsics with optimized order of for loops:
+
+```c
+void calculate_array(float* a, float* b, float* c, int size){
+	__m128 a_128;
+	__m128 b_128;
+	__m128 c_128;
+
+	for(int i = 0; i<size; i+=4) { 
+    	a_128 = _mm_load_ps(&a[i]);
+    	b_128 = _mm_load_ps(&b[i]);
+    	c_128 = _mm_load_ps(&c[i]);
+        
+        for(int run = 0; run<REPETITIONS; ++run){    
+            a_128 = _mm_add_ps(a_128, _mm_mul_ps(b_128, c_128));
+        }
+        _mm_store_ps(&a[i], a_128);
+	}
+}
+```
+
+
+Compiled with:
+
+```makefile
+gcc -std=gnu11 -fopenmp -O1 -D TIMES
+```
+
+### Results
+
+![speedup_task3](task3/plots/speedup_task3.png)
+
+![speedup_task3_optimized](task3/plots/speedup_task3_optimized.png)
+
+| Input size | Reference | using intrinsics | using intrinsics (optimized) |
+| ---------- | --------- | ---------------- | ---------------------------- |
+| 2048       | 2.4803    | 0.6259           | 0.618                        |
+| 4096       | 5.793     | 2.3166           | 1.2352                       |
+| 6144       | 8.4365    | 4.0827           | 1.853                        |
+| 8192       | 11.3653   | 5.427            | 2.4704                       |
+| 10240      | 14.6792   | 6.7908           | 3.0883                       |
+| 12288      | 17.1076   | 8.147            | 3.709                        |
+| 14336      | 19.6561   | 9.514            | 4.3298                       |
+
+### Observations
+
+Only using intrinsics gives us only a speedup of about 2, with an exception for size 2048, where the speedup is 4. Since the for loop iterates only size/4 many times instead of size many times there should be a speedup of 4 for every problem size. Not sure why it is just for problem size 2048 the case.
+
+The measured times of task 3 are very similar to the float variant of task 2 and faster as task 1 as well.
+
+With the optimized variant on the other hand the speed up starts at about 4 for problem size 2048 and rises to almost 5 for growing problem sizes.
+
+
+### Perf
+
+Results for the perf measured events with an input size of 2048:
+
+| Event                           | Value         | optimized   |
+| ------------------------------- | ------------- | ----------- |
+| SIMD_INST_RETIRED.PACKED_SINGLE | 2,048,020,542 | 512,022,590 |
+| SIMD_INST_RETIRED.SCALAR_SINGLE | 6,146         | 6,146       |
+| SIMD_INST_RETIRED.PACKED_DOUBLE | 0             | 0           |
+| SIMD_INST_RETIRED.SCALAR_DOUBLE | 16,441        | 512,028,736 |
+| SIMD_INST_RETIRED.VECTOR        | 34,962        | 34,962      |
+| SIMD_INST_RETIRED.ALL           | 2,048,075,998 | 512,078,046 |
+
+The significant event is .PACKED_SINGLE since floats are used. 2 million vectorized operations means every operation is vectorized for the original variant with intrinsics. 
+
+The optimized version however has just a quarter of that, since the load and store operations are only executed less often.
+
+I am not sure why there are differences in the values for operations with double precision.

@@ -16,18 +16,18 @@ time: 17.1076
 -
 time: 19.6561
 *
-using intrinsics
+using intrinsics (optimized)
 -
-time: 0.6259
+time: 0.618
 -
-time: 2.3166
+time: 1.2352
 -
-time: 4.0827
+time: 1.853
 -
-time: 5.4270
+time: 2.4704
 -
-time: 6.7908
+time: 3.0883
 -
-time: 8.1470
+time: 3.709
 -
-time: 9.5140
+time: 4.3298
