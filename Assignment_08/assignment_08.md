@@ -47,5 +47,9 @@ which indicate that the data access patterns in the loop are analyzed. It also p
 The compiler analyses whether SLP can be performed. According to [this source](https://llvm.org/docs/Vectorizers.html#the-slp-vectorizer) SLP stands for "Superword-level parallelism, which means that similar independent instructions get merged into vector insturctions (`=== vect_analyze_slp ===`). 
 It also seems like the compiler checks how data is alligned (`=== vect_analyze_data_refs_alignment ===`).
 
+## Useful resources
+
+[Source that explains SLP](https://llvm.org/docs/Vectorizers.html#the-slp-vectorizer)
+[GCCs source code with useful comments](https://opensource.apple.com/source/libstdcxx/libstdcxx-39/libstdcxx/gcc/tree-vect-analyze.c)
 
 
