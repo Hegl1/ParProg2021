@@ -5,8 +5,6 @@ title: Assignment 8
 
 # Assignment 8
 
-by Tobias Hosp, Marcel Alexander Huber and Thomas Klotz
-
 ## Task 1
 
 ### Code snippet 1
@@ -142,6 +140,12 @@ analysis.c:18:9: note: === vect_analyze_data_ref_accesses ===
 ```
 
 which indicate that the data access patterns in the loop are analyzed. It also performs dependency analysis (`analysis.c:18:9: note: === vect_analyze_data_ref_dependences ===`) and cycle analysis (`=== vect_analyze_scalar_cycles ===`).
+
+Information about the dependency distance and direction can also be found:
+```
+analysis.c:18:9: note: dependence distance  = 4.
+analysis.c:18:9: note: dependence distance negative.
+```
 
 #### Does the compiler perform any analysis beyond checking for dependencies and semantic correctness?
 
