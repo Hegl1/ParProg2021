@@ -152,7 +152,93 @@ analysis.c:18:9: note: dependence distance negative.
 The compiler analyses whether SLP can be performed. According to [this source](https://llvm.org/docs/Vectorizers.html#the-slp-vectorizer) SLP stands for "Superword-level parallelism, which means that similar independent instructions get merged into vector insturctions (`=== vect_analyze_slp ===`).
 It also seems like the compiler checks how data is alligned (`=== vect_analyze_data_refs_alignment ===`).
 
-## Useful resources
+### Useful resources
 
 [Source that explains SLP](https://llvm.org/docs/Vectorizers.html#the-slp-vectorizer)
 [GCCs source code with useful comments](https://opensource.apple.com/source/libstdcxx/libstdcxx-39/libstdcxx/gcc/tree-vect-analyze.c)
+
+
+
+## Task 3
+
+### Snippet 1
+
+This code snippit is embarrassingly parallel.
+
+#### Original variant
+
+```c
+for(int i = 0; i < 1024; i++) { 
+	y[i] = x[i];
+}
+```
+
+#### Manually parallelized
+
+```c
+#pragma omp parallel
+	{
+#pragma omp for schedule(static)
+		for(int i = 0; i < 1024; i++) {
+    		y[i] = x[i];
+		}
+	} 
+```
+
+Manually it is pretty easy to parallelize with OpenMP and I am certain that the compiler is able to parallelize this, I do not see any circumstance that it would not be able to.
+
+### Snippet 2
+
+#### Original variant
+
+```c
+for(int i = 4; i <= N; i += 7) {
+	for(int j = 0; j <= N; j += 3) {
+		A[i] = 0;
+	}
+}
+```
+
+#### Half normalized variant
+
+After (half) the normalization of the loops both of their iterator variables start at 1. As an additional condition the variables get incremented by 1 with each iteration. The index of the accessed array gets adjusted, so that in each iteration the same element of the array gets accessed as in the original.
+
+```c
+for(int i = 0; i <= (N - 4) / 7; ++i) {
+	for(int j = 0; j <= N / 3; ++j) {
+		A[i + 4] = 0;
+	}
+} 
+```
+
+#### Normalized variant
+
+Unfortunately I did not come up with a fully normalized variant, since there are still nested loops. I was not able to get it into one single for loop.
+
+The normalized would look something like this, where the condition in the for loop is the multiplication of the conditions of `i` and `j`. Furthermore the index `x` should be increment by 1 with every `N/3`-th iteration in this variant.
+
+```c
+for(int i = 0; i <= (N * N - 4 * N) / 21; ++i) {
+	A[x] = 0;
+}
+```
+
+### Snippet 3
+
+For the third code snippet it is questioned if it holds any dependencies. And it does hold dependencies indeed.
+
+```c
+L1	for(int i = 1; i < N; i++) {
+L2    	for(int j = 1; j < M; j++) {
+L3        	for(int k = 1; k < L; k++) {
+S1            	a[i+1][j][k-1] = a[i][j][k] + 5;
+        	}
+    	}
+	}
+```
+
+Formally written the dependency is described as the following: $S_1[1,1,2] \space \delta \space S_1[2,1,1]$
+
+This means that $S_1$ is true dependence on itself, in detail: e.g. the element a[2,1,1] is dependent on the element a[1,1,2]. Accordingly the distance vector corresponds to: (1, 0, -1); and the direction vector to: (<, =, >).
+
+The distance vector is calculated by the offset of the indexes of the dependent elements and the direction vector by the signs of the elements of the distance vector.
