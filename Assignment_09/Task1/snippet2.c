@@ -44,22 +44,23 @@ void print_array(float* array, int len){
 }
 
 void original_snippet(float* x, float* y, float* z, int len){
+    float a;
     double start_time = omp_get_wtime();
     for (int i=0; i < len; i++) {
-        float a = (x[i] + y[i]) / (i+1);
+        a = (x[i] + y[i]) / (i+1);
         z[i] = a;
     }
     double end_time = omp_get_wtime();
-
     printf("time: %5.4f\n", end_time-start_time);
 
 }
 
 void parallel_snippet(float* x, float* y, float* z, int len){
+    float a;
     double start_time = omp_get_wtime();
-    #pragma omp parallel for
+    #pragma omp parallel for private(a)
     for (int i=0; i < len; i++) {
-        float a = (x[i] + y[i]) / (i+1);
+        a = (x[i] + y[i]) / (i+1);
         z[i] = a;
     }
     double end_time = omp_get_wtime();
