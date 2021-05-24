@@ -209,3 +209,65 @@ And with twice = 0:
 
 - sequential: 0.082208 s
 - parallel: 0.038709 s
+
+## Task 3
+
+### Original snippet
+
+```c
+for (int i = 0; i < 4; ++i) {
+    for (int j = 1; j < 4; ++j) {
+        a[i + 2][j - 1] = b * a[i][j] + 4;
+    }
+}
+```
+
+| i    | j    | source    | sink      | distance vector | direction vector |
+| ---- | ---- | --------- | --------- | --------------- | ---------------- |
+| 0    | 1    | a\[0]\[1] | a\[2]\[0] | (2,-1)          | (<,>)            |
+| 0    | 2    | a\[0]\[2] | a\[2]\[1] | (2,-1)          | (<,>)            |
+| 0    | 3    | a\[0]\[3] | a\[2]\[2] | (2,-1)          | (<,>)            |
+| 1    | 1    | a\[1]\[1] | a\[3]\[0] | (2,-1)          | (<,>)            |
+| 1    | 2    | a\[1]\[2] | a\[3]\[1] | (2,-1)          | (<,>)            |
+| 1    | 3    | a\[1]\[3] | a\[3]\[2] | (2,-1)          | (<,>)            |
+| 2    | 1    | a\[2]\[1] | a\[4]\[0] | (2,-1)          | (<,>)            |
+| 2    | 2    | a\[2]\[2] | a\[4]\[1] | (2,-1)          | (<,>)            |
+| 2    | 3    | a\[2]\[3] | a\[4]\[2] | (2,-1)          | (<,>)            |
+| 3    | 1    | a\[3]\[1] | a\[5]\[0] | (2,-1)          | (<,>)            |
+| 3    | 2    | a\[3]\[2] | a\[5]\[1] | (2,-1)          | (<,>)            |
+| 3    | 3    | a\[3]\[3] | a\[5]\[2] | (2,-1)          | (<,>)            |
+
+The leftmost non-"=" component of the direction vector defines the dependency. In this case it is "<", which means there is a true dependency, this means the sink occurs before the source. The distance vector (and therefore the direction vector) stays the same through all iterations, since the distance vector originates from the offsets in the indices of the 2D array.
+
+### Parallelized snippet
+
+#### Loop splitting
+
+```c
+#pragma omp parallel
+	{
+#pragma omp single
+		{
+#pragma omp task
+			{
+				for(int i = 0; i < 2; ++i) {
+					for(int j = 1; j < 4; ++j) {
+						a[i + 2][j - 1] = b * a[i][j] + 4;
+					}
+				}
+			}
+
+#pragma omp task
+			{
+				for(int i = 2; i < 4; ++i) {
+					for(int j = 1; j < 4; ++j) {
+						a[i + 2][j - 1] = b * a[i][j] + 4;
+					}
+				}
+			}
+		}
+	}
+
+```
+
+The code can be parallelized with loop splitting into 2 loops, which themselfes are not independent on themselves.

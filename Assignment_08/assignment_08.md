@@ -114,11 +114,11 @@ analysis.c has been compiled with gcc 8.2.0 and the following command:
 
 ### Findings
 
-#### Can you find any information pointint to successful or unsuccessful vectorization?
+#### Can you find any information pointing to successful or unsuccessful vectorization?
 
 The compiler prints the result for each vectorization attempt it makes (so there is a section for every loop).
-If a loop was vectorized successfull, the compiler outputs `NOTE: LOOP VECTORIZED` at the end of an output block.
-If the vectorization was unsuccessfull, the compiler prints a message with the reason why the loop could not be vectorized, e.g.:
+If a loop was vectorized successful, the compiler outputs `NOTE: LOOP VECTORIZED` at the end of an output block.
+If the vectorization was unsuccessful, the compiler prints a message with the reason why the loop could not be vectorized, e.g.:
 
 ```
 analysis.c:22:9: note: not vectorized: not suitable for gather load _5 = a[_4];
@@ -133,7 +133,7 @@ analysis.c:27:9: note: not vectorized: loop contains function calls or data refe
 
 #### What information about dependence analysis can you find in the output?
 
-The compiler marks which kind of anylysis is performed. For example, there are output lines like
+The compiler marks which kind of analysis is performed. For example, there are output lines like
 
 ```
 analysis.c:18:9: note: === vect_analyze_data_ref_accesses ===
@@ -149,8 +149,8 @@ analysis.c:18:9: note: dependence distance negative.
 
 #### Does the compiler perform any analysis beyond checking for dependencies and semantic correctness?
 
-The compiler analyses whether SLP can be performed. According to [this source](https://llvm.org/docs/Vectorizers.html#the-slp-vectorizer) SLP stands for "Superword-level parallelism, which means that similar independent instructions get merged into vector insturctions (`=== vect_analyze_slp ===`).
-It also seems like the compiler checks how data is alligned (`=== vect_analyze_data_refs_alignment ===`).
+The compiler analyses whether SLP can be performed. According to [this source](https://llvm.org/docs/Vectorizers.html#the-slp-vectorizer) SLP stands for "Superword-level parallelism, which means that similar independent instructions get merged into vector instructions (`=== vect_analyze_slp ===`).
+It also seems like the compiler checks how data is aligned (`=== vect_analyze_data_refs_alignment ===`).
 
 ### Useful resources
 
