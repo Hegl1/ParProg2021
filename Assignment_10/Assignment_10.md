@@ -105,7 +105,7 @@ To parallelize this program, we would suggest to first parallelize the loop nest
 
 ### Other information provided by the analysis
 
-The analysis did also produce a call three which indicates how much time of a function call has been spent in 'child' function calls.
+The analysis did also produce a call tree which indicates how much time of a function call has been spent in 'child' function calls.
 We did not consider this information for our conclusion, but we are sure that it is uesfull for other people. Here is an example for a call tree given by gprof:
 
 ```
