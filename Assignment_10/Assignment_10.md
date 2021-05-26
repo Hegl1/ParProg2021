@@ -70,7 +70,7 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
 }
 ```
 
-There are three nested for loops in this function. This is the part which (probably) is the most time consuming. To veryfy this, we can look at the linewise anaylsis output.
+There are tree nested for loops in this function. This is the part which (probably) is the most time consuming. To veryfy this, we can look at the linewise anaylsis output.
 
 ### Line based analysis
 
