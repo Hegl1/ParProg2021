@@ -1,43 +1,36 @@
-
-
-56.11user 0.81system 0:11.70elapsed 486%CPU (0avgtext+0avgdata 444392maxresident)k
-
-
 *
 Reference
 -
-time: 
+time: 17.61
 -
-18.66
+time: 17.61
 -
-18.66
+time: 17.61
 -
-18.66
+time: 17.61
 -
-18.66
+time: 17.61
 -
-18.66
+time: 17.61
 -
-18.66
+time: 17.61
 -
-18.66
--
+time: 17.61
 *
 Parallelized version
 -
-18.60
+time: 17.63
 -
-13.09
+time: 12.45
 -
-13.11
+time: 12.59
 -
-12.96
+time: 12.55
 -
-12.55
+time: 12.14
 -
-12.20
+time: 11.74
 -
-11.97
+time: 11.52
 -
-11.70
--
+time: 11.27

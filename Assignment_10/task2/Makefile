@@ -1,5 +1,5 @@
 CC=gcc
-CC_FLAGS=-O3 -g3 -lm -fopenmp
+CC_FLAGS=-O3 -g3 -fopenmp
 
 .PHONEY: all
 all: real
@@ -7,7 +7,7 @@ all: real
 SRC=$(wildcard *.c)
 
 real: $(SRC)
-	@$(CC) $(CC_FLAGS) $(SRC) -o real
+	@$(CC) $(CC_FLAGS) $(SRC) -o real -lm
 
 .PHONEY: clean
 clean:

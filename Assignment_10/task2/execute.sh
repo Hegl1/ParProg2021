@@ -8,7 +8,7 @@ echo "Reference"
 for ((COUNTER=1; COUNTER<=8; COUNTER+=1));
 do
     echo "-"
-    OMP_NUM_THREADS=$COUNTER /usr/bin/time ./real
+    OMP_NUM_THREADS=$COUNTER /usr/bin/time -v ./real
 
 done
 
@@ -18,7 +18,7 @@ echo "Reference"
 for ((COUNTER=1; COUNTER<=8; COUNTER+=1));
 do
     echo "-"
-    OMP_NUM_THREADS=1 /usr/bin/time ./real
+    OMP_NUM_THREADS=1 /usr/bin/time -v ./real
 
 done
 

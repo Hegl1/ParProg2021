@@ -153,3 +153,23 @@ index % time    self  children    called     name
 -----------------------------------------------
 ```
 
+
+
+## Task 2
+
+interessant fürn Tob: real.c in Zeilen 459, 522, 668
+
+| Number of threads | Reference | Parallelized version |
+| ----------------- | --------- | -------------------- |
+| 0                 | 17.61     | 17.63                |
+| 1                 | 17.61     | 12.45                |
+| 2                 | 17.61     | 12.59                |
+| 3                 | 17.61     | 12.55                |
+| 4                 | 17.61     | 12.14                |
+| 5                 | 17.61     | 11.74                |
+| 6                 | 17.61     | 11.52                |
+| 7                 | 17.61     | 11.27                |
+
+
+
+![speedup_task2](task2/plots/speedup_task2.png)

@@ -28,7 +28,15 @@ int main() {
 	}
 	double end_time_seq = omp_get_wtime();
 
-	// -------------- parallelized -------------
+	printf("\narray (sequential):\n");
+	for(int i = 0; i < N; ++i) {
+		for(int j = 0; j < M; ++j) {
+			printf(" %d", a[i][j]);
+		}
+		printf("\n");
+	}
+
+	// -------------- loop splitting -------------
 
 	// initialize array
 	for(int i = 0; i < N; ++i) {
@@ -64,8 +72,46 @@ int main() {
 	}
 	double end_time_par = omp_get_wtime();
 
+	printf("\narray (parallel):\n");
+	for(int i = 0; i < N; ++i) {
+		for(int j = 0; j < M; ++j) {
+			printf(" %d", a[i][j]);
+		}
+		printf("\n");
+	}
+
+	// -------------- inner loop parallelization -------------
+
+	// initialize array
+	for(int i = 0; i < N; ++i) {
+		for(int j = 0; j < M; ++j) {
+			a[i][j] = i + j * 5;
+		}
+	}
+
+	// juggle array
+	double start_time_par_inner = omp_get_wtime();
+	for(int i = 0; i < 4; ++i) {
+#pragma omp parallel for
+		for(int j = 1; j < 4; ++j) {
+			a[i + 2][j - 1] = b * a[i][j] + 4;
+		}
+	}
+	double end_time_par_inner = omp_get_wtime();
+
+	// print array
+	printf("\narray (parallel):\n");
+	for(int i = 0; i < N; ++i) {
+		for(int j = 0; j < M; ++j) {
+			printf(" %d", a[i][j]);
+		}
+		printf("\n");
+	}
+
+	// print times
 	printf("sequential time: %lf\n", end_time_seq - start_time_seq);
-	printf("parallel time: %lf\n", end_time_par - start_time_par);
+	printf("loop splitting time: %lf\n", end_time_par - start_time_par);
+	printf("inner loop parallelization time: %lf\n", end_time_par_inner - start_time_par_inner);
 
 	return EXIT_SUCCESS;
 }
