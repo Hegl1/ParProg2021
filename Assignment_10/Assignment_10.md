@@ -5,7 +5,7 @@ title: Assignment 9
 
 # Assignment 10
 
-The program was analyzed twice: once with the --line flag, and onces without it. 
+The program was analyzed twice: once with the --line flag, and onces without it.
 
 #### Function based analysis
 
@@ -13,8 +13,8 @@ Without the --line flag, the program gets analyzed on a function level. The outp
 
 ```
 Each sample counts as 0.01 seconds.
-  %   cumulative   self              self     total           
- time   seconds   seconds    calls  ms/call  ms/call  name    
+  %   cumulative   self              self     total
+ time   seconds   seconds    calls  ms/call  ms/call  name
  49.78      8.59     8.59      147    58.45    63.08  resid
  22.25     12.43     3.84      168    22.86    26.87  psinv
   8.40     13.88     1.45      147     9.87     9.87  interp
@@ -26,7 +26,7 @@ Each sample counts as 0.01 seconds.
   0.00     17.27     0.00        4     0.00     0.00  wtime_
 ```
 
-The top time consuming function looks like this: 
+The top time consuming function looks like this:
 
 ```c
 static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
@@ -57,7 +57,7 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
     }
   }
   if (timeron) timer_stop(T_resid);
-  
+
   comm3(r, n1, n2, n3, k);
 
   if (debug_vec[0] >= 1) {
@@ -77,8 +77,8 @@ There are tree nested for loops in this function. This is the part which (probab
 The line based analysis produced output that is way too large to put in here, so there is only the relevant part included.
 
 ```
-  %   cumulative   self              self     total           
- time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  %   cumulative   self              self     total
+ time   seconds   seconds    calls  Ts/call  Ts/call  name
   8.78      1.52     1.52                             resid (real.c:526 @ 40411a)
   3.88      2.19     0.67                             resid (real.c:524 @ 4040c2)
   3.56      2.80     0.62                             psinv (real.c:464 @ 404e10)
@@ -101,7 +101,7 @@ The lines printed above are the top 15 time consuming lines in the program. As w
 
 ### How to parallelize the program
 
-To parallelize this program, we would suggest to first parallelize the loop nest in the resid function. If this does not yield enough speedup, one can also look at the loop nest in the `psinv` function. 
+To parallelize this program, we would suggest to first parallelize the loop nest in the resid function. If this does not yield enough speedup, one can also look at the loop nest in the `psinv` function.
 
 ### Other information provided by the analysis
 
@@ -153,11 +153,153 @@ index % time    self  children    called     name
 -----------------------------------------------
 ```
 
-
-
 ## Task 2
 
 interessant fürn Tob: real.c in Zeilen 459, 522, 668
+
+Like we have seen in task 1, we want to optimize the methods `psinv`,`resid` and `iterp` because those 3 function take the most execution time.
+
+### First Attempts
+
+At first, we focused on the `resid` function, because it has the longest execution time and has nested construct of 4 for-loops. So we tried to parallize those or rather to optimize the whole nested for-loop construction.
+
+But every try of collapsing the loops failed, because the calculations were wrong afterwards. Example of one attempt:
+
+```c
+#pragma omp parallel
+{
+#pragma omp for collapse(3)
+for (i3 = 1; i3 < n3-1; i3++) {
+for (i2 = 1; i2 < n2-1; i2++) {
+for (i1 = 0; i1 < n1; i1++) {
+u1[i1] = u[i3][i2-1][i1] + u[i3][i2+1][i1] + u[i3-1][i2][i1] + u[i3+1][i2][i1];
+u2[i1] = u[i3-1][i2-1][i1] + u[i3-1][i2+1][i1] + u[i3+1][i2-1][i1] + u[i3+1][i2+1][i1];
+}
+}
+}
+
+#pragma omp for collapse(3)
+for (i3 = 1; i3 < n3-1; i3++) {
+for (i2 = 1; i2 < n2-1; i2++) {
+for (i1 = 1; i1 < n1-1; i1++) {
+r[i3][i2][i1] = v[i3][i2][i1] - a[0] _ u[i3][i2][i1]
+//-------------------------------------------------------------------
+// Assume a[1] = 0 (Enable 2 lines below if a[1] not= 0)
+//-------------------------------------------------------------------
+// - a[1] _ ( u[i3][i2][i1-1] + u[i3][i2][i1+1]
+// + u1[i1] )
+//------------------------------------------------------------------- - a[2] _ ( u2[i1] + u1[i1-1] + u1[i1+1] ) - a[3] _ ( u2[i1-1] + u2[i1+1] );
+}
+}
+}
+}
+```
+
+We also tried a lot of different adjustments to the pragmas, but even without collapse it calculated the wrong solution. The only thing that worked for us, is shown in the following part.
+
+### Parallelized Code
+
+nested for-loops from function `resid`:
+
+```c
+#pragma omp parallel for private(u1, u2) schedule(dynamic)
+  for (i3 = 1; i3 < n3-1; i3++) {
+    for (i2 = 1; i2 < n2-1; i2++) {
+      for (i1 = 0; i1 < n1; i1++) {
+        u1[i1] = u[i3][i2-1][i1] + u[i3][i2+1][i1]
+               + u[i3-1][i2][i1] + u[i3+1][i2][i1];
+        u2[i1] = u[i3-1][i2-1][i1] + u[i3-1][i2+1][i1]
+               + u[i3+1][i2-1][i1] + u[i3+1][i2+1][i1];
+      }
+      for (i1 = 1; i1 < n1-1; i1++) {
+        r[i3][i2][i1] = v[i3][i2][i1]
+                      - a[0] * u[i3][i2][i1]
+        //-------------------------------------------------------------------
+        //  Assume a[1] = 0      (Enable 2 lines below if a[1] not= 0)
+        //-------------------------------------------------------------------
+        //            - a[1] * ( u[i3][i2][i1-1] + u[i3][i2][i1+1]
+        //                     + u1[i1] )
+        //-------------------------------------------------------------------
+                      - a[2] * ( u2[i1] + u1[i1-1] + u1[i1+1] )
+                      - a[3] * ( u2[i1-1] + u2[i1+1] );
+      }
+    }
+  }
+```
+
+nested for-loops from function `psinv`:
+
+```c
+#pragma omp parallel for private(r1, r2) schedule(dynamic)
+  for (i3 = 1; i3 < n3-1; i3++) {
+    for (i2 = 1; i2 < n2-1; i2++) {
+      for (i1 = 0; i1 < n1; i1++) {
+        r1[i1] = r[i3][i2-1][i1] + r[i3][i2+1][i1]
+               + r[i3-1][i2][i1] + r[i3+1][i2][i1];
+        r2[i1] = r[i3-1][i2-1][i1] + r[i3-1][i2+1][i1]
+               + r[i3+1][i2-1][i1] + r[i3+1][i2+1][i1];
+      }
+      for (i1 = 1; i1 < n1-1; i1++) {
+        u[i3][i2][i1] = u[i3][i2][i1]
+                      + c[0] * r[i3][i2][i1]
+                      + c[1] * ( r[i3][i2][i1-1] + r[i3][i2][i1+1]
+                               + r1[i1] )
+                      + c[2] * ( r2[i1] + r1[i1-1] + r1[i1+1] );
+        //--------------------------------------------------------------------
+        // Assume c[3] = 0    (Enable line below if c[3] not= 0)
+        //--------------------------------------------------------------------
+        //            + c[3] * ( r2[i1-1] + r2[i1+1] )
+        //--------------------------------------------------------------------
+      }
+    }
+  }
+```
+
+nested for-loops from function `interp`:
+
+```c
+#pragma omp parallel for private(z1, z2, z3) schedule(dynamic)
+    for (i3 = 0; i3 < mm3-1; i3++) {
+      for (i2 = 0; i2 < mm2-1; i2++) {
+        for (i1 = 0; i1 < mm1; i1++) {
+          z1[i1] = z[i3][i2+1][i1] + z[i3][i2][i1];
+          z2[i1] = z[i3+1][i2][i1] + z[i3][i2][i1];
+          z3[i1] = z[i3+1][i2+1][i1] + z[i3+1][i2][i1] + z1[i1];
+        }
+
+        for (i1 = 0; i1 < mm1-1; i1++) {
+          u[2*i3][2*i2][2*i1] = u[2*i3][2*i2][2*i1]
+                              + z[i3][i2][i1];
+          u[2*i3][2*i2][2*i1+1] = u[2*i3][2*i2][2*i1+1]
+                                + 0.5 * (z[i3][i2][i1+1] + z[i3][i2][i1]);
+        }
+        for (i1 = 0; i1 < mm1-1; i1++) {
+          u[2*i3][2*i2+1][2*i1] = u[2*i3][2*i2+1][2*i1]
+                                + 0.5 * z1[i1];
+          u[2*i3][2*i2+1][2*i1+1] = u[2*i3][2*i2+1][2*i1+1]
+                                  + 0.25 * (z1[i1] + z1[i1+1]);
+        }
+        for (i1 = 0; i1 < mm1-1; i1++) {
+          u[2*i3+1][2*i2][2*i1] = u[2*i3+1][2*i2][2*i1]
+                                  + 0.5 * z2[i1];
+          u[2*i3+1][2*i2][2*i1+1] = u[2*i3+1][2*i2][2*i1+1]
+                                  + 0.25 * (z2[i1] + z2[i1+1]);
+        }
+        for (i1 = 0; i1 < mm1-1; i1++) {
+          u[2*i3+1][2*i2+1][2*i1] = u[2*i3+1][2*i2+1][2*i1]
+                                  + 0.25 * z3[i1];
+          u[2*i3+1][2*i2+1][2*i1+1] = u[2*i3+1][2*i2+1][2*i1+1]
+                                    + 0.125 * (z3[i1] + z3[i1+1]);
+        }
+      }
+    }
+```
+
+With those modifications, the calculations are still correct and we achieve a maximum speed-up of 1.6 using 8 threads. That is almost half the time from the beginning with only 3 additional lines of code.
+
+### Results
+
+In the tabel below are the measured execution times for different amounts of threads. `Reference` shows the time for the given base version and `Parallelized version` shows the times for the optimized code.
 
 | Number of threads | Reference | Parallelized version |
 | ----------------- | --------- | -------------------- |
@@ -170,6 +312,6 @@ interessant fürn Tob: real.c in Zeilen 459, 522, 668
 | 6                 | 17.61     | 11.52                |
 | 7                 | 17.61     | 11.27                |
 
-
+This results in following speed-up values:
 
 ![speedup_task2](task2/plots/speedup_task2.png)
