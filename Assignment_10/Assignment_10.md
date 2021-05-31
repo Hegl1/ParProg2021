@@ -70,7 +70,7 @@ static void resid(void *ou, void *ov, void *or, int n1, int n2, int n3,
 }
 ```
 
-There are tree nested for loops in this function. This is the part which (probably) is the most time consuming. To veryfy this, we can look at the linewise anaylsis output.
+There are tree nested for loops in this function. This is the part which (probably) is the most time consuming. To verify this, we can look at the linewise analysis output.
 
 ### Line based analysis
 
@@ -106,7 +106,7 @@ To parallelize this program, we would suggest to first parallelize the loop nest
 ### Other information provided by the analysis
 
 The analysis did also produce a call tree which indicates how much time of a function call has been spent in 'child' function calls.
-We did not consider this information for our conclusion, but we are sure that it is uesfull for other people. Here is an example for a call tree given by gprof:
+We did not consider this information for our conclusion, but we are sure that it is useful for other people. Here is an example for a call tree given by gprof:
 
 ```
 index % time    self  children    called     name
@@ -155,13 +155,11 @@ index % time    self  children    called     name
 
 ## Task 2
 
-interessant fürn Tob: real.c in Zeilen 459, 522, 668
-
 Like we have seen in task 1, we want to optimize the methods `psinv`,`resid` and `iterp` because those 3 function take the most execution time.
 
 ### First Attempts
 
-At first, we focused on the `resid` function, because it has the longest execution time and has nested construct of 4 for-loops. So we tried to parallize those or rather to optimize the whole nested for-loop construction.
+At first, we focused on the `resid` function, because it has the longest execution time and has nested construct of 4 for-loops. So we tried to parallelize those or rather to optimize the whole nested for-loop construction.
 
 But every try of collapsing the loops failed, because the calculations were wrong afterwards. Example of one attempt:
 
@@ -299,7 +297,7 @@ With those modifications, the calculations are still correct and we achieve a ma
 
 ### Results
 
-In the tabel below are the measured execution times for different amounts of threads. `Reference` shows the time for the given base version and `Parallelized version` shows the times for the optimized code.
+In the table below are the measured execution times for different amounts of threads. `Reference` shows the time for the given base version and `Parallelized version` shows the times for the optimized code.
 
 | Number of threads | Reference | Parallelized version |
 | ----------------- | --------- | -------------------- |
