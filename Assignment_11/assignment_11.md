@@ -8,25 +8,30 @@ title: Assignment 11
 ## Task 1
 
 ### Snippet a
+
 `c1` is of type `unsigned`
+
 ```C
 unsigned c2 = 32 * c1;
 ```
+
 If we assume that the multiplication takes longer then a bit shift, we can optimize this code as follows:
 
 ```C
 unsigned c2 = c1 << 5;
 ```
 
-If we look at the compiled assembly code, we see no difference between those two snippets when compiled with `-O3`. 
+If we look at the compiled assembly code, we see no difference between those two snippets when compiled with `-O3`.
 
 ### Snippet b
 
 `c1` is of type `unsigned`
+
 ```C
 unsigned c2 = 15 * c1;
 ```
-Assuming bit shifting + one subtraction are faster then a multiplication, one could do this: 
+
+Assuming bit shifting + one subtraction are faster then a multiplication, one could do this:
 
 ```c
 unsigned c2 = (c1 << 4) - c1;
@@ -37,9 +42,11 @@ Once again the corresponding assembly codes are identical.
 ### Snippet c
 
 `c1` is of type `unsigned`
+
 ```C
 unsigned c2 = 96 * c1;
 ```
+
 Assuming that 2 shift operations and one addition are still faster then a single multiplication, the following optimization could be helpful:
 
 ```c
@@ -57,7 +64,7 @@ c_solution:
 ```
 
 which basically performs a multiplication by 96, which means that the compiler thinks that the unoptimized version is faster then the optimized one.
-Additionally, if we compile the unoptimized version, the compiler does the following: 
+Additionally, if we compile the unoptimized version, the compiler does the following:
 
 ```assembly
 c:
@@ -73,9 +80,11 @@ Since we are not quite tallented with x86 assembly code, we cannot explain this 
 ### Snippet d
 
 `c1` is of type `unsigned`
+
 ```C
 unsigned c2 = 0.125 * c1;
 ```
+
 Since the multiplication of 0.125 is equivalent to the division by 8, we can optimize this snippet as follows:
 
 ```c
@@ -117,6 +126,7 @@ for (int i = 0; i < N / 5; ++i) {
     sum_fifth += a[5 * i];
 }
 ```
+
 If we want to get rid of the expensive multiplication inside the loop, we can simply transform the loop head like this:
 
 ```C
@@ -131,13 +141,30 @@ The compiled versions of the unoptimized and optimized snippet look identical.
 ### Snippet f
 
 `a` is of type `double *`
+
 ```C
 for (int i = 0; i < N; ++i) {
     a[i] += i / 5.3;
 }
 ```
+
 ### Snippet g
+
 `c1` is of type `float`
+
 ```C
 float c2 = -1 * c1;
+```
+
+To just swap the sign, the multiplication of -1 is not the best way. Better is to just put `-` before the variable you want the negation of because then a `sign-bit flip` ist executed. So most significant bit, which equals to the sign bit (IEEE 754 single-precision binary floating-point format).
+
+```C
+float c2 = -c1;
+```
+
+The compiler does this by default so both result in the same assembly code:
+
+```assembly
+xor     eax, eax
+        ret
 ```
