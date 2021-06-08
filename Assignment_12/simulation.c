@@ -4,6 +4,8 @@
 
 //TODO implement proper behaviour for bouncing at borders
 //TODO tune parameters so model behaves ... more watchable
+// Major flaw: when to point masses get to close to each otther (and eventually overlap), 
+//proper speed change cannot be calculated -> maybe this results in the odd corner behaviour
 
 
 int main(int argc, char** argv){
@@ -29,6 +31,14 @@ int main(int argc, char** argv){
     printf("%f\n", bodies[1].position[0]);
     printf("%f\n", bodies[1].position[1]);
     printf("%f\n", bodies[1].position[2]);
+
+    printf("%f\n", bodies[2].position[0]);
+    printf("%f\n", bodies[2].position[1]);
+    printf("%f\n", bodies[2].position[2]);
+
+    printf("%f\n", bodies[0].position[0]);
+    printf("%f\n", bodies[0].position[1]);
+    printf("%f\n", bodies[0].position[2]);
     
     
 }

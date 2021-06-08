@@ -1,7 +1,7 @@
 #ifndef __N_BODY_H__
 #define __N_BODY_H__
 
-#define G 6.6e-10
+#define G 1 //6.6e-10
 #define MAX_DIM 500
 #define MAX_MASS 5
 
