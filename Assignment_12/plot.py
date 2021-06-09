@@ -5,5 +5,5 @@ spec.loader.exec_module(plot)
 
 OUT_FILE = 'output_task1_week12.dat'
 
-plot.plot_runtime_per_thread(OUT_FILE, "Speedup for vectorized program, inputs = 5000 100", "speedup_task1", "Reference")
+plot.plot_runtime_per_thread(OUT_FILE, "Speedup for parallel program, num_bodies = 5000, timesteps = 100", "speedup_task1", "Reference")
 plot.print_table(OUT_FILE)
