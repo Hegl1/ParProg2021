@@ -91,7 +91,7 @@ def _produce_line_plot(title_list, curve_list, plot_title, output_file_name):
         plt.plot(thread_vec, curve)
         plt.scatter(thread_vec, curve, marker='x')
     plt.xlabel("Number of threads")
-    plt.ylabel("Execution time [s]")
+    plt.ylabel("Speedup")
     plt.legend(title_list)
     plt.title(plot_title)
     _create_folder_for_graphics()

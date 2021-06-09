@@ -35,7 +35,7 @@ def plot():
         title.set_text('iteration={}'.format(j))
 
     anim = FuncAnimation(f, anim, interval=50)
-    #anim.save("test.gif")
+    anim.save("test.gif")
     pyplot.show()
 
 plot()
