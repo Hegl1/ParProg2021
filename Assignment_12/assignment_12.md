@@ -7,12 +7,12 @@ title: Assignment 9
 
 ### Introduction
 
-The task was to implement a 3-D n-body simulation. Although there are quite fast and clever algorithms for this problem like the [Barnes-Hut-Algorithm](https://de.wikipedia.org/wiki/Barnes-Hut-Algorithmus), we decided to implement the naive version, which has a runtime complexity of $\mathcal{O}(n^2)$.
+The task was to implement a 3-D n-body simulation. Although there are quite fast and clever algorithms for this problem like the [Barnes-Hut-Algorithm](https://de.wikipedia.org/wiki/Barnes-Hut-Algorithmus), we decided to implement a naive version, which has a runtime complexity of $\mathcal{O}(n^2)$.
 In the naive approach, every body compares its position directly to every other body, calculates the force between them and then updates its velocity and position accordingly.
 
 ### Implementation
 
-Each particle gets represented by a struct containing information about the mass, velocity and position of the body. Note that position and velocity consist of three components (one for every dimension).
+Each particle gets represented by a struct containing information about the mass, velocity and position of the body. Note that position and velocity consist of three components each (one for every dimension).
 
 ```c
 typedef struct body_struct {
@@ -44,7 +44,7 @@ void initialize_bodies(body* bodies, int size){
 
 #### Updating velocity
 
-The velocities get updated as described in [the introduction section](#Introduction). Note that the force on an axis gets set to 0 as soon as bodies get too close, since we wanted to avoid absurdly high accelarations which can occur since we did not implement any collision model. 
+The velocities get updated as described in [the introduction section](#Introduction). Note that the force on an axis gets set to 0 as soon as bodies get too close together, since we wanted to avoid absurdly high accelarations which can occur since we did not implement any collision model. 
 
 ```c
 void update_velocities_naive(body* bodies, int size){
@@ -70,7 +70,7 @@ void update_velocities_naive(body* bodies, int size){
 
 #### Updating position
 
-The positions also get updated as described in [the introduction section](#Introduction). Note. that the velocity of a body gets set to 0 as soon as the simulation boundaries are reached.
+The positions also get updated as described in [the introduction section](#Introduction). Note that the velocity of a body gets set to 0 as soon as the simulation boundaries are reached.
 
 ```C
 void update_positions(body* bodies, int size){
@@ -91,7 +91,7 @@ void update_positions(body* bodies, int size){
 
 #### Saving the data to a file
 
-In order to visualize the simulation it is necessary to write the position of each particle to a file. To achive this, the following function is provided:
+In order to visualize the simulation it is necessary to write the position of each particle to a file. To achieve this, the following function is provided:
 
 ```c
 void print_bodies_to_file(body* bodies, int size){
@@ -111,7 +111,7 @@ void print_bodies_to_file(body* bodies, int size){
 
 #### Putting it all together
 
-The main simulation loop is defined in the main function in `simulation.c`. Note that nothing is written to the file if the program is compiled with the `TIME_MES` flag.
+The main simulation loop is defined in the main function in `simulation.c`. Note that nothing is written to the file if the constant `TIME_MES` is defined in the program.
 
 ```c
 for (int i = 0; i<steps; ++i){
@@ -125,15 +125,15 @@ for (int i = 0; i<steps; ++i){
 
 ### Visualization of the simulation
 
-We visualized the simulation with a custom python script using matplotlib. In order to run the script, one need to have matplotlib and numpy installed.
+We visualized the simulation with a custom python script using matplotlib. In order to run the script, one needs to have matplotlib and numpy installed.
 Here is an example of the generated plot:
 
 ![visualisation](visualisation.gif)
 
 #### Some observations
 
-- Some points are very fast. This is due to some points are initialized with a very low mass and therefore get accellerated quite violently. 
-- The simulation probably needs some fine tuning in terms of parameters (e.g. the masses of particles and the gravitaional constant).
+- Some points are very fast. This is due to some points being initialized with a very low mass and therefore getting accelerated quite violently. 
+- The simulation probably needs some fine tuning in terms of parameters (e.g. the masses of particles and the gravitational constant).
 - A collision model would be very benefitial because we could avoid using workarounds (described in [here](#Updating-velocity)) which currently lead to odd behaviour of the particles.  
 
 ### Parallel version
@@ -187,7 +187,7 @@ The program has been tested with `n_bodies` = 5000 and `timesteps`= 100.
 
 ### Time measurements for various inputs
 
-#### Varriyng the number of bodies
+#### Varying the number of bodies
 
 Measurements have been taken with 100 timesteps and 8 threads for various numbers of bodies.
 
@@ -255,4 +255,4 @@ Measurements have been taken with 1000 bodies and 8 threads for various numbers 
 | 4800       | 22.02                |
 | 5000       | 22.91                |
 
-This curve also fullfills our expecation, since the progam has a linear runtinme complexity ($\mathcal{O}(n)$) in the number of timesteps.
+This curve also fullfills our expectations, since the progam has a linear runtime complexity ($\mathcal{O}(n)$) in the number of timesteps.
