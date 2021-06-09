@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <omp.h>
 #include "n_body.h"
 
 //TODO implement proper behaviour for bouncing at borders
@@ -19,26 +20,26 @@ int main(int argc, char** argv){
     int steps = atol(argv[2]);
 
     body bodies[size];
-
-
+    remove(OUT_FILE);
     initialize_bodies(bodies, size);
+    print_bodies_to_file(bodies, size);
+
+    #ifdef TIME_MES
+    double start_time = omp_get_wtime();
+    #endif
+
     for (int i = 0; i<steps; ++i){
         update_velocities_naive(bodies, size);
-        update_positions(bodies, size);  
+        update_positions(bodies, size); 
+        #ifndef TIME_MES
+        print_bodies_to_file(bodies, size);
+        #endif
     }
-    
 
-    printf("%f\n", bodies[1].position[0]);
-    printf("%f\n", bodies[1].position[1]);
-    printf("%f\n", bodies[1].position[2]);
+    #ifdef TIME_MES
+    double end_time = omp_get_wtime();
+    printf("time: %5.2f\n", end_time - start_time);
+    #endif
 
-    printf("%f\n", bodies[2].position[0]);
-    printf("%f\n", bodies[2].position[1]);
-    printf("%f\n", bodies[2].position[2]);
-
-    printf("%f\n", bodies[0].position[0]);
-    printf("%f\n", bodies[0].position[1]);
-    printf("%f\n", bodies[0].position[2]);
-    
     
 }
