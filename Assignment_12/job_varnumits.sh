@@ -11,7 +11,7 @@
 #$ -N task2_job
 
 # Redirect output stream to this file.
-#$ -o output_task1_week12_varnumbodies.dat
+#$ -o output_task1_week12_varnumits.dat
 
 # Join the error stream to the output stream.
 #$ -j yes
