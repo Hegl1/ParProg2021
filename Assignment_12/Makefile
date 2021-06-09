@@ -1,4 +1,4 @@
-CC = gcc-10
+CC = gcc
 CFLAGS = -Wall -Werror -pedantic -O3 -fopenmp -lm
 
 .PHONY: all clean times

@@ -183,3 +183,76 @@ The program has been tested with `n_bodies` = 5000 and `timesteps`= 100.
 
   We are quite happy with this (nearly linear) speedup and especially with the effort to speedup ratio. 
 
+
+
+### Time measurements for various inputs
+
+#### Varriyng the number of bodies
+
+Measurements have been taken with 100 timesteps and 8 threads for various numbers of bodies.
+
+
+
+![var_bodies](plots/var_bodies.png)
+
+
+| Number of bodies | Execution time |
+| ---- | ---- |
+| 500 | 0.14 |
+| 1000 | 0.47 |
+| 1500 | 1.0 |
+| 2000 | 1.7 |
+| 2500 | 2.58 |
+| 3000 | 3.66 |
+| 3500 | 4.92 |
+| 4000 | 6.38 |
+| 4500 | 8.0 |
+| 5000 | 9.83 |
+| 5500 | 11.85 |
+| 6000 | 14.04 |
+| 6500 | 16.41 |
+| 7000 | 19.3 |
+| 7500 | 22.15 |
+| 8000 | 25.47 |
+| 8500 | 27.81 |
+| 9000 | 31.14 |
+| 9500 | 34.63 |
+| 10000 | 38.27 |
+
+One can clearly see the exponentially rising runtime (which fits our asymptotic complexity of $\mathcal{O}(n^2)$.
+
+#### Varriyng number of timesteps
+
+Measurements have been taken with 1000 bodies and 8 threads for various numbers of timesteps.
+
+![var_times](plots/var_times.png)
+
+| Input size | Parallelized Version |
+| ---------- | -------------------- |
+| 200        | 0.92                 |
+| 400        | 1.84                 |
+| 600        | 2.76                 |
+| 800        | 3.67                 |
+| 1000       | 4.59                 |
+| 1200       | 5.5                  |
+| 1400       | 6.42                 |
+| 1600       | 7.34                 |
+| 1800       | 8.26                 |
+| 2000       | 11.1                 |
+| 2200       | 11.45                |
+| 2400       | 11.03                |
+| 2600       | 11.93                |
+| 2800       | 12.85                |
+| 3000       | 13.76                |
+| 3200       | 14.68                |
+| 3400       | 15.59                |
+| 3600       | 16.51                |
+| 3800       | 17.43                |
+| 4000       | 18.35                |
+| 4200       | 19.24                |
+| 4400       | 21.75                |
+| 4600       | 21.09                |
+| 4800       | 22.02                |
+| 5000       | 22.91                |
+
+This curve also fullfills our expecation, since the progam has a linear runtinme complexity ($\mathcal{O}(n)$) in the number of timesteps.
