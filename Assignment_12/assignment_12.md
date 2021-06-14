@@ -44,7 +44,7 @@ void initialize_bodies(body* bodies, int size){
 
 #### Updating velocity
 
-The velocities get updated as described in [the introduction section](#Introduction). Note that the force on an axis gets set to 0 as soon as bodies get too close together, since we wanted to avoid absurdly high accelarations which can occur since we did not implement any collision model. 
+The velocities get updated as described in [the introduction section](#Introduction). Note that the force on an axis gets set to 0 as soon as bodies get too close together, since we wanted to avoid absurdly high accelerations which can occur since we did not implement any collision model. 
 
 ```c
 void update_velocities_naive(body* bodies, int size){
@@ -134,7 +134,7 @@ Here is an example of the generated plot:
 
 - Some points are very fast. This is due to some points being initialized with a very low mass and therefore getting accelerated quite violently. 
 - The simulation probably needs some fine tuning in terms of parameters (e.g. the masses of particles and the gravitational constant).
-- A collision model would be very benefitial because we could avoid using workarounds (described in [here](#Updating-velocity)) which currently lead to odd behaviour of the particles.  
+- A collision model would be very beneficial because we could avoid using workarounds (described in [here](#Updating-velocity)) which currently lead to odd behavior of the particles. 
 
 ### Parallel version
 
@@ -221,7 +221,7 @@ Measurements have been taken with 100 timesteps and 8 threads for various number
 
 One can clearly see the exponentially rising runtime (which fits our asymptotic complexity of $\mathcal{O}(n^2)$.
 
-#### Varriyng number of timesteps
+#### Varying number of timesteps
 
 Measurements have been taken with 1000 bodies and 8 threads for various numbers of timesteps.
 
@@ -255,4 +255,4 @@ Measurements have been taken with 1000 bodies and 8 threads for various numbers 
 | 4800       | 22.02                |
 | 5000       | 22.91                |
 
-This curve also fullfills our expectations, since the progam has a linear runtime complexity ($\mathcal{O}(n)$) in the number of timesteps.
+This curve also meets our expectations, since the program has a linear runtime complexity ($\mathcal{O}(n)$) in the number of timesteps.
